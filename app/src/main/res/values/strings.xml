@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">DiagnosticApp</string>
+
+    <string name="task_1_name">Dlhá samohláska A</string>
+    <string name="task_1_description">Dlhá samohláska A, cca 10 sekúnd na <b>normálnej</b> úrovni.</string>
+
+    <string name="task_2_name">Dlhá samohláska A</string>
+    <string name="task_2_description">Dlhá samohláska A, cca 10 sekúnd na <b>hlasitej</b> úrovni.</string>
+
+    <string name="task_3_name">Dlhá samohláska E</string>
+    <string name="task_3_description">Dlhá samohláska E, cca 10 sekúnd na <b>normálnej</b> úrovni.</string>
+
+    <string name="task_4_name">Dlhá samohláska E</string>
+    <string name="task_4_description">Dlhá samohláska E, cca 10 sekúnd na <b>hlasitej</b> úrovni.</string>
+
+    <string name="task_5_name">Opakovať PA-TA-KA</string>
+    <string name="task_5_description">Opakovať PA-TA-KA <b>prirodzenou</b> rýchlosťou (5x -8x)</string>
+
+    <string name="task_6_name">Rýchlo opakovať PA-TA-KA</string>
+    <string name="task_6_description">Opakovať PA-TA-KA <b>najrýchlejšou</b> možnou rýchlosťou (5x-8x)</string>
+
+    <string name="task_7_name">Opakovať PA-PA-PA</string>
+    <string name="task_7_description">Opakovať PA-PA-PA <b>prirodzenou</b> rýchlosťou (5x -8x).</string>
+
+    <string name="task_8_name">Rýchlo opakovať PA-PA-PA</string>
+    <string name="task_8_description">Opakovať PA-PA-PA <b>najrýchlejšou</b> možnou rýchlosťou (5x-8x).</string>
+
+    <string name="task_9_name">Čítanie viet</string>
+    <string name="task_9_description">Čítať doleuvedené vety. Slovo podčiarknuté a zvýraznené veľkými písmenami zdôrazniť.\nDnes sme to už nestihli, ale možno <u>ZAJTRA</u> navštívime všetkých známych.\nAj keď sme spolu telefonovali možno zajtra <u>NAVŠTÍVIME</u> všetkých známych\nPríbuzných sme už navštívili, možno zajtra navštívime všetkých <u>ZNÁMYCH</u>.</string>
+
+    <string name="task_10_name">Čítanie textu</string>
+    <string name="task_10_description">Ešte aj koncom 19. storočia domáci aj pocestní prechádzali cez radové typy dedín, aj cez
+rozptýlené osídlenie. Dediny spájali prašné cesty, v strede mestečiek boli cesty z dlažobných
+kociek. Starostlivosť o cesty spočívala na pleciach miestnych samospráv, ktoré platili
+cestárov. Starali sa o miestne cesty vedúce obcou alebo mestečkom, ale tiež od jednej
+hranice katastra k druhej. Na juhozápade a juhu viedli cesty po rovine, čo bolo výhodou. Keď
+však zafúkal poriadny vietor, ktorý sa nemal o čo oprieť, víril prach z ciest, vrchnú vrstvu
+zeme z rovinatých polí i spŕšky vody z lenivo tečúcich mohutných riek. V zime sa po šírych
+úrodných poliach preháňali studené vetriská, ktoré snehom zafúkali každú vyvýšeninu
+slúžiacu ako orientačný bod. Ľudia putovali peši, jazdili na koňoch, jednotlivci i rodiny sa
+presúvali na povozoch či v kočoch. Najesť sa a prespať mohli v zájazdných hostincoch. Bolo
+len otázkou času, kedy sa na dôležitých cestných ťahoch začne budovať železnica.</string>
+
+    <string name="task_11_name">Voľná reč</string>
+    <string name="task_11_description">Porozprávať niečo o koníčkoch, čomu sa venuje vo voľnom čase, kde pracoval/pracuje.</string>
+
+</resources>
