@@ -52,6 +52,15 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
         }
         mediaRecorder = null
         _isRecording.value = false
+        if (outputFilePath.isNullOrEmpty()) {
+            Log.e("VoiceTask", "No recording found to play.")
+            return
+        }
+        val file = File(outputFilePath!!)
+        if (!file.exists()) {
+            Log.e("VoiceTask", "File does not exist: $outputFilePath")
+            return
+        }
     }
 
     fun startPlayback() {
@@ -89,7 +98,9 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun saveRecording(taskId: String?) {
+        Log.e("VoiceTaskViewModel", "Trying to save recording for $taskId")
         if (!outputFilePath.isNullOrEmpty() && taskId != null) {
+            Log.e("VoiceTaskViewModel", "Save recording")
             PatientRepository.updateVoiceTask(taskId, outputFilePath)
         }
     }

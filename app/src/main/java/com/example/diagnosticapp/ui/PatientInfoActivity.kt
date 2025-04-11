@@ -2,7 +2,6 @@ package com.example.diagnosticapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
@@ -10,7 +9,6 @@ import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
-import com.example.diagnosticapp.data.repository.PatientRepository
 import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 
 class PatientInfoActivity : AppCompatActivity() {
@@ -44,7 +42,7 @@ class PatientInfoActivity : AppCompatActivity() {
 
             viewModel.createNewPatient(age, selectedSex)
 
-            val intent = Intent(this, ActivityPatient::class.java)
+            val intent = Intent(this, PatientActivity::class.java)
             startActivity(intent)
         }
     }

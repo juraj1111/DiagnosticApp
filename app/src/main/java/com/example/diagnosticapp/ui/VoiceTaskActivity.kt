@@ -1,6 +1,7 @@
 package com.example.diagnosticapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
@@ -9,28 +10,33 @@ import com.example.diagnosticapp.R
 
 class VoiceTaskActivity : AppCompatActivity() {
 
-    private var taskId: Int = 0
+    private lateinit var taskId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voice_task)
 
-        taskId = intent.getIntExtra("TASK_ID", -1)
+        // Get the task ID from the Intent extras
+        taskId = intent.getStringExtra("TASK_ID") ?: ""
 
+        Log.d("VoiceTaskActivity", "Extra: $taskId.")
+
+        // Load the info fragment on first creation only
         if (savedInstanceState == null) {
             loadTaskInfoFragment()
         }
 
+        // Set up the Start button
         val btnStart = findViewById<Button>(R.id.btn_start)
-
         btnStart.setOnClickListener {
             val overlayContainer = findViewById<FrameLayout>(R.id.execution_container)
             btnStart.visibility = View.GONE
             overlayContainer.visibility = View.VISIBLE
 
-            // Add Overlay Fragment
+            // ✅ Corrected: Use newInstance(taskId)
+            val fragment = VoiceTaskExecutionFragment.newInstance(taskId)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.execution_container, VoiceTaskExecutionFragment())
+                .replace(R.id.execution_container, fragment)
                 .commit()
         }
     }
@@ -42,11 +48,12 @@ class VoiceTaskActivity : AppCompatActivity() {
             .commit()
     }
 
+    // Optional method if you trigger execution screen from somewhere else
     fun loadTaskExecutionFragment() {
         val fragment = VoiceTaskExecutionFragment.newInstance(taskId)
         supportFragmentManager.beginTransaction()
-            .add(R.id.execution_container, fragment)  // Use add() to stack fragments
-            .addToBackStack(null) // Pressing "back" returns to info screen
+            .add(R.id.execution_container, fragment)
+            .addToBackStack(null)
             .commit()
     }
 }

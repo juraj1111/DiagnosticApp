@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -75,7 +74,7 @@ class VoiceTaskExecutionFragment : Fragment() {
             if(executionState === ExecutionState.RECORDED || executionState === ExecutionState.PLAYING){
                 if(executionState === ExecutionState.PLAYING) viewModel.stopPlayback()
                 viewModel.saveRecording(taskId)
-                val intent = Intent(requireContext(), VoiceTasksActivity::class.java)
+                val intent = Intent(requireContext(), VoiceTasksListActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -84,12 +83,12 @@ class VoiceTaskExecutionFragment : Fragment() {
     }
 
     companion object {
-        private const val ARG_TASK_ID = "task_id"
+        private const val ARG_TASK_ID = "TASK_ID"
 
-        fun newInstance(taskId: Int): VoiceTaskExecutionFragment {
+        fun newInstance(taskId: String): VoiceTaskExecutionFragment {
             val fragment = VoiceTaskExecutionFragment()
             val args = Bundle()
-            args.putInt(ARG_TASK_ID, taskId)
+            args.putString(ARG_TASK_ID, taskId)
             fragment.arguments = args
             return fragment
         }

@@ -18,8 +18,8 @@
 
         <ImageView
             android:id="@+id/restart_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:clickable="true"
             android:contentDescription="Restart"
             android:src="@drawable/restart"
@@ -27,17 +27,19 @@
 
         <ImageView
             android:id="@+id/play_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="80dp"
+            android:layout_marginEnd="80dp"
             android:clickable="true"
             android:contentDescription="Play"
             android:src="@drawable/mic_circle"
-            android:layout_margin="8dp" />
+/>
 
         <ImageView
             android:id="@+id/save_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:clickable="true"
             android:contentDescription="Save"
             android:src="@drawable/tick"

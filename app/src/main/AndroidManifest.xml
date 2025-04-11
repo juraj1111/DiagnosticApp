@@ -27,8 +27,8 @@
         </activity>
 
         <activity android:name=".ui.PatientInfoActivity" />
-        <activity android:name=".ui.ActivityPatient" />
-        <activity android:name=".ui.VoiceTasksActivity"/>
+        <activity android:name=".ui.PatientActivity" />
+        <activity android:name=".ui.VoiceTasksListActivity"/>
         <activity android:name=".ui.VoiceTaskActivity"/>
 
     </application>

@@ -21,6 +21,6 @@
         android:width="350dp"
         android:height="100dp"
         android:text="Existujúci pacient"
-        android:textSize="30dp" />
+        android:textSize="30sp" />
 
 </LinearLayout>

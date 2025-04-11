@@ -33,6 +33,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="-30dp"
+        android:layout_marginBottom="-20dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Placeholder"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:padding="5dp" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnWritingProtocol"
         android:layout_width="wrap_content"
