@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+        <!-- Top Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="16dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@android:drawable/ic_menu_revert"
+                android:contentDescription="Back"/>
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Voice tasks"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginLeft="-60dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- GridLayout with 2 Columns -->
+        <GridLayout
+            android:id="@+id/gridLayoutButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="1"
+            android:rowCount="6"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:useDefaultMargins="true">
+
+            <!-- Repeat for all buttons -->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask1"
+                android:text="Task 1" />
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask2"-->
+<!--                android:text="Task 2" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask3"-->
+<!--                android:text="Task 3" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask4"-->
+<!--                android:text="Task 4" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask5"-->
+<!--                android:text="Task 5" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask6"-->
+<!--                android:text="Task 6" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask7"-->
+<!--                android:text="Task 7" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask8"-->
+<!--                android:text="Task 8" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask9"-->
+<!--                android:text="Task 9" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask10"-->
+<!--                android:text="Task 10" />-->
+
+<!--            <Button-->
+<!--                style="@style/TaskButtonStyle"-->
+<!--                android:id="@+id/btnTask11"-->
+<!--                android:text="Task 11" />-->
+
+        </GridLayout>
+    </LinearLayout>
+</ScrollView>

@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:width="380dp"
         android:height="100dp"
-        android:text="Písací protokol 0/8"
+        android:text="Písací protokol"
         android:textSize="30sp" />
 
     <Button
@@ -66,7 +66,27 @@
         android:layout_height="wrap_content"
         android:width="380dp"
         android:height="100dp"
-        android:text="Hlasový protokol 0/8"
+        android:text="Hlasový protokol"
+        android:textSize="30sp" />
+
+
+    <Button
+        android:id="@+id/btnUpdateData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="380dp"
+        android:height="70dp"
+        android:text="Odoslať dáta"
+        android:layout_marginTop="30dp"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/btnDrawTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="380dp"
+        android:height="70dp"
+        android:text="Vyskúšať písanie"
         android:textSize="30sp" />
 
 </LinearLayout>

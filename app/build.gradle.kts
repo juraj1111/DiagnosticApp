@@ -1,8 +1,26 @@
+import java.util.Properties
+
+val localPropsFile = rootProject.file("local.properties")
+val localProps = Properties()
+
+if (localPropsFile.exists()) {
+    localPropsFile.inputStream().use { localProps.load(it) }
+}
+
+val username = localProps.getProperty("USERNAME") ?: "default_user"
+val password = localProps.getProperty("PASSWORD") ?: "default_pass"
+val url = localProps.getProperty("URL") ?: "https://example.com"
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+//val username = localProps["USERNAME"]?.toString() ?: "default_user"
+//val username = System.getenv("USERNAME") ?: "default_user"
+//val password = System.getenv("PASSWORD") ?: "default_pass"
+//val url = System.getenv("URL") ?: "https://example.com"
 
 android {
     namespace = "com.example.diagnosticapp"
@@ -16,7 +34,17 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "USERNAME", "\"$username\"")
+        buildConfigField("String", "PASSWORD", "\"$password\"")
+        buildConfigField("String", "URL", "\"$url\"")
     }
+
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
+
 
     buildTypes {
         release {
@@ -37,10 +65,13 @@ android {
     buildFeatures {
         compose = true
     }
+
+
 }
 
 dependencies {
 
+    implementation("com.github.thegrizzlylabs:sardine-android:0.7")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -59,3 +90,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+

@@ -23,8 +23,19 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
     private val _isPlaying = MutableLiveData(false)
     val isPlaying: LiveData<Boolean> get() = _isPlaying
 
+    private val _recordingTime = MutableLiveData<Int>() // seconds
+    val recordingTime: LiveData<Int> get() = _recordingTime
+
+    private val _playbackTime = MutableLiveData<Int>() // seconds
+    val playbackTime: LiveData<Int> get() = _playbackTime
+
+    //    private var timerHandler: Handler? = null
+    private var timerRunnable: Runnable? = null
+    private var currentTime = 0
+
     fun startRecording() {
-        val fileName = "voice_task_${System.currentTimeMillis()}.3gp"  // Change file extension to .3gp
+        val fileName =
+            "voice_task_${System.currentTimeMillis()}.3gp"  // Change file extension to .3gp
         val context = getApplication<Application>().applicationContext
         val file = File(context.filesDir, fileName)
         outputFilePath = file.absolutePath
@@ -111,6 +122,31 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
         mediaPlayer?.release()
     }
 }
+
+//    private fun startTimer(isRecording: Boolean) {
+//        timerHandler = Handler()
+//        currentTime = 0
+//        timerRunnable = object : Runnable {
+//            override fun run() {
+//                currentTime++
+//                if (isRecording) {
+//                    _recordingTime.postValue(currentTime)
+//                } else {
+//                    _playbackTime.postValue(currentTime)
+//                }
+//                timerHandler?.postDelayed(this, 1000)
+//            }
+//        }
+//        timerHandler?.post(timerRunnable!!)
+//    }
+//
+//    private fun stopTimer() {
+//        timerHandler?.removeCallbacks(timerRunnable!!)
+//        timerHandler = null
+//        timerRunnable = null
+//        currentTime = 0
+//    }
+//}
 
 
 
