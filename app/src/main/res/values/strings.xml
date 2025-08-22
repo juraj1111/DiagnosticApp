@@ -45,7 +45,12 @@ len otázkou času, kedy sa na dôležitých cestných ťahoch začne budovať �
     <string name="task_11_description">Porozprávať niečo o koníčkoch, čomu sa venuje vo voľnom čase, kde pracoval/pracuje.</string>
 
 
-    <string name="draw_task_1_name">Pisanie UPRAVIT</string>
-    <string name="draw_task_1_description">Pis podla predlohy UPRAVIT.</string>
+    <string name="draw_task_1_name">Písanie "l"</string>
+    <string name="draw_task_1_description">5 opakovaní podľa predlohy.</string>
+
+
+    <string-array name="Diseases">
+        <item>Encefalopatia</item>
+    </string-array>
 
 </resources>

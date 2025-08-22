@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
@@ -40,10 +41,18 @@ class PatientInfoActivity : AppCompatActivity() {
         if (age != null && selectedSexId != -1) {
             val selectedSex = findViewById<RadioButton>(selectedSexId).text.toString()
 
-            viewModel.createNewPatient(age, selectedSex)
-
-            val intent = Intent(this, PatientActivity::class.java)
-            startActivity(intent)
+            viewModel.createNewPatient(age, selectedSex) { success ->
+                if (success) {
+                    val intent = Intent(this, PatientActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Bohužiaľ nepodarilo sa vytvoriť pacienta.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 }

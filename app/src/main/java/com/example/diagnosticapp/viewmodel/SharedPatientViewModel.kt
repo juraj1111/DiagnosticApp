@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 
 class SharedPatientViewModel : ViewModel() {
 
@@ -25,50 +26,62 @@ class SharedPatientViewModel : ViewModel() {
     }
 
 
-    fun createNewPatient(age: Int, sex: String) {
-        val voiceTasksData = VoiceTasks
+    fun createNewPatient(age: Int, sex: String, onResult: (Boolean) -> Unit){
+        viewModelScope.launch {
+            val voiceTasksData = VoiceTasks
                 .getAllTasks()
-            .map { voiceTask -> TaskData(id = voiceTask.id) }  // default status is UNCOMPLETED
+                .map { voiceTask -> TaskData(id = voiceTask.id) }  // default status is UNCOMPLETED
 
-        val writingTasksData = WritingTasks
-            .getAllTasks()
-            .map { voiceTask -> TaskData(id = voiceTask.id) }  // default status is UNCOMPLETED
+            val writingTasksData = WritingTasks
+                .getAllTasks()
+                .map { voiceTask -> TaskData(id = voiceTask.id) }  // default status is UNCOMPLETED
 
-        val protocol1Tasks = voiceTasksData.toMutableList()
-        val protocol2Tasks = writingTasksData.toMutableList()
+            val protocol1Tasks = voiceTasksData.toMutableList()
+            val protocol2Tasks = writingTasksData.toMutableList()
 
-        val newPatient = Patient(
-            id = System.currentTimeMillis().toInt(), // or UUID.randomUUID().toString()
-            age = age,
-            sex = sex,
-            disease = "encylopathy", //TODO doplanie od pouzivatela
-            protocol1Tasks = protocol1Tasks,
-            protocol2Tasks = protocol2Tasks
-        )
+            val disease = "encylopathy" //TODO doplanie od pouzivatela
+            val path = disease
 
-        PatientRepository.currentPatient = newPatient
-        _currentPatient.value = newPatient  // Update LiveData to observe the new patient
+            val newPatient = Patient(
+                id = PatientRepository.getNextPatientId(path).toInt(),
+                age = age,
+                sex = sex,
+                disease = disease,
+                protocol1Tasks = protocol1Tasks,
+                protocol2Tasks = protocol2Tasks
+            )
+
+            PatientRepository.currentPatient = newPatient
+            _currentPatient.value = newPatient  // Update LiveData to observe the new patient
+
+            val success =  PatientRepository.updatePatient(newPatient)
+            onResult(success)
+        }
     }
 
-    // Optionally, if you want to expose the current patient, you can create a getter method
+
     fun getCurrentPatient(): Patient? {
         return PatientRepository.currentPatient
+    }
+
+    fun createExistingPatient(id: Int, disease: String, onResult: (Boolean) -> Unit){
+        viewModelScope.launch {
+            val patient: Patient? = PatientRepository.fetchPatient(id, disease)
+
+            if (patient == null) {
+                onResult(false)
+                return@launch
+            }
+
+            PatientRepository.currentPatient = patient
+            //_currentPatient.value = patient
+            onResult(true)
+        }
     }
 
     fun getIsUpdated(): Boolean {
         return PatientRepository.isUpdated
     }
 
-
-
-    fun sendPatientData() {
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            try {
-//                PatientRepository.sendPatientData()
-//            } catch (e: Exception) {
-//                Log.e("Update", "Error sending patient data: ${e.message}")
-//            }
-//        }
-    }
 
 }

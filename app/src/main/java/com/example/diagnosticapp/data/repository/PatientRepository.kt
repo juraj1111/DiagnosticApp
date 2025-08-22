@@ -20,6 +20,9 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.log
 
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
+
 object PatientRepository {
 
     var currentPatient: Patient? = null
@@ -70,13 +73,25 @@ object PatientRepository {
         }
     }
 
+    fun updateWritingTask(taskId: String, filePath: String?) {
+        val task = currentPatient?.protocol2Tasks?.find { it.id == taskId }
+        if (task != null) {
+            task.resultFilePath = filePath
+            task.status = TaskStatus.COMPLETED
+            isUpdated = false
+            Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
+        } else {
+            Log.e("PatientRepository", "Voice task $taskId not found.")
+        }
+    }
+
 //    val files = sardine.list("https://poseidon.fei.tuke.sk/remote.php/dav/files/jBlasko/")
 //    files.forEach {
 //        Log.d("WebDAV", "Found: ${it.name}")
 //    }
 
 
-    suspend fun sendPatientData() {
+    fun sendPatientData() {
         val patient = currentPatient ?: run {
             Log.e("PatientRepository", "No patient exists for sending data.")
             return
@@ -96,10 +111,7 @@ object PatientRepository {
     }
 
 
-    fun uploadFileToNextcloud(
-        remotePath: String,
-        task: TaskData
-    ) {
+    fun uploadFileToNextcloud(remotePath: String, task: TaskData) {
         val sardine = OkHttpSardine()
         sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
         val baseUrl = BuildConfig.URL
@@ -151,4 +163,70 @@ object PatientRepository {
         }
     }
 
+    suspend fun getNextPatientId(remotePath: String): Int = withContext(Dispatchers.IO){
+        val sardine = OkHttpSardine()
+        sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+
+        val baseUrl = BuildConfig.URL
+        val fullUrl = baseUrl + remotePath
+
+        try {
+            val resources = sardine.list(fullUrl)
+
+            val ids = resources
+                .filter { it.isDirectory && it.href != null }
+                .mapNotNull { resource ->
+                    val dirName = resource.href.toString()
+                        .trimEnd('/')
+                        .substringAfterLast("/")
+                    dirName.toIntOrNull()  // only keep directories that are numbers
+                }
+
+            val maxId = ids.maxOrNull() ?: 0
+            val nextId = maxId + 1
+            nextId
+        } catch (e: Exception) {
+            Log.e("PatientRepository", "Error getting next patient ID: ${e.message}", e)
+            1 // default if none exist or error occurs
+        }
+    }
+
+    suspend fun updatePatient(patient: Patient): Boolean = withContext(Dispatchers.IO){
+        val sardine = OkHttpSardine()
+        sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+
+        val baseUrl = BuildConfig.URL
+        val remotePath = patient.disease + "/" + String.format("%04d", patient.id)
+
+        return@withContext try {
+            ensureDirectoriesExist(sardine, baseUrl, remotePath)
+            val json = Json.encodeToString(patient)
+            Log.d("PatientRepository", "Uploading to: $baseUrl$remotePath/patient.json")
+            sardine.put("$baseUrl$remotePath/patient.json", json.toByteArray())
+            true
+        }catch (e: Exception){
+            Log.e("PatientRepository", "Error updating patient: ${e.message}", e)
+            false
+        }
+    }
+
+    suspend fun fetchPatient(id: Int, disease: String) : Patient? = withContext(Dispatchers.IO){
+        try {
+            val sardine = OkHttpSardine().apply {
+                setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+            }
+
+            val remotePath = "${BuildConfig.URL}$disease/${String.format("%04d", id)}"
+            val patientFile = "$remotePath/patient.json"
+
+            // check if patient.json exists
+            if (!sardine.exists(patientFile)) return@withContext null
+
+            val jsonBytes = sardine.get(patientFile).readBytes()
+            Json.decodeFromString<Patient>(String(jsonBytes))
+        } catch (e: Exception) {
+            Log.e("WebDAV", "Error fetching patient: ${e.message}", e)
+            null
+        }
+    }
 }

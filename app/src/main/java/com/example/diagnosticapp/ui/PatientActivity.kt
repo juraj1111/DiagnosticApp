@@ -14,6 +14,7 @@ import com.example.diagnosticapp.data.repository.PatientRepository
 import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PatientActivity : AppCompatActivity(){
 
@@ -76,6 +77,9 @@ class PatientActivity : AppCompatActivity(){
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     PatientRepository.sendPatientData()
+                    withContext(Dispatchers.Main) {
+                        recreate()
+                    }
                 } catch (e: Exception) {
                     Log.e("Update", "Error sending patient data: ${e.message}")
                 }
@@ -87,4 +91,5 @@ class PatientActivity : AppCompatActivity(){
             startActivity(intent)
         }
     }
+
 }

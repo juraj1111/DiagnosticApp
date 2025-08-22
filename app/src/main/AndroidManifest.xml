@@ -35,6 +35,7 @@
         <activity android:name=".ui.WritingTestActivity"/>
         <activity android:name=".ui.WritingTaskActivity"/>
         <activity android:name=".ui.WritingTaskExecutionActivity"/>
+        <activity android:name=".ui.PatientSelectionActivity"/>
 
     </application>
 </manifest>

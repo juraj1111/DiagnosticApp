@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.0.20" // use the same version as your Kotlin
 }
 
 //val username = localProps["USERNAME"]?.toString() ?: "default_user"
@@ -72,6 +73,7 @@ android {
 dependencies {
 
     implementation("com.github.thegrizzlylabs:sardine-android:0.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

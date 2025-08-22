@@ -83,7 +83,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
             if (!outputFilePath.isNullOrEmpty()) {
                 Log.e("DrawingView", "Saving .svc file to repository")
-                PatientRepository.updateVoiceTask(taskId, outputFilePath!!)
+                PatientRepository.updateWritingTask(taskId, outputFilePath!!)
             } else {
                 Log.e("DrawingView", "Failed to generate outputFilePath")
             }

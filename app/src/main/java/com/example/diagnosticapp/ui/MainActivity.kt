@@ -37,27 +37,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.testDB()
 
         btnExist.setOnClickListener {
-//            val intent = Intent(this, PatientSelectionActivity::class.java)
-//            startActivity(intent)
+            val intent = Intent(this, PatientSelectionActivity::class.java)
+            startActivity(intent)
         }
 
-
-//        val file = File(filesDir, "dummy_upload.txt")
-//        file.writeText("Temporary test content")
-//        val remotePath = ""
-//        Thread {
-//            try {
-//                val baseUrl = "https://poseidon.fei.tuke.sk/remote.php/dav/files/jBlasko/"
-//                val file = File(filesDir, "dummy_upload.txt")
-//                file.writeText("Temporary test content")
-//                val remotePath = "Doctor1/DiseaseX/Patient001/voice/task1.3gp"
-//
-//                uploadFileToNextcloud(baseUrl, remotePath, file)
-//                Log.d("WebDav", "Upload OK")
-//            } catch (e: Exception) {
-//                Log.e("WebDav", "Upload error: ${e.message}")
-//            }
-//        }.start()
     }
 
 }
