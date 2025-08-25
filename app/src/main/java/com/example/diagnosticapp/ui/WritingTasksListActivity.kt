@@ -43,7 +43,15 @@ class WritingTasksListActivity : AppCompatActivity() {
 
     private fun setupTaskButtons() {
         taskButtons = mapOf(
-            "task1" to findViewById(R.id.btnTask1)
+            "task1" to findViewById(R.id.btnTask1),
+            "task2" to findViewById(R.id.btnTask2),
+            "task3" to findViewById(R.id.btnTask3),
+            "task4" to findViewById(R.id.btnTask4),
+            "task5" to findViewById(R.id.btnTask5),
+            "task6" to findViewById(R.id.btnTask6),
+            "task7" to findViewById(R.id.btnTask7),
+            "task8" to findViewById(R.id.btnTask8),
+            "task9" to findViewById(R.id.btnTask9)
         )
 
         taskButtons.forEach { (taskId, button) ->

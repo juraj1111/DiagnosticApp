@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -73,18 +74,58 @@ class PatientActivity : AppCompatActivity(){
             btnUpdate.setBackgroundColor(getColor(R.color.yellow))
         }
 
+//        btnUpdate.setOnClickListener {
+//            lifecycleScope.launch(Dispatchers.IO) {
+//                try {
+//                    if(!viewModel.sendPatientData())
+//                        Toast.makeText(this, "Bohužiaľ sa nepodalrilio odoslať všetky údaje, skúste to neskôr.", Toast.LENGTH_LONG).show()
+//                } catch (e: Exception) {
+//                    Log.e("Update", "Error sending patient data: ${e.message}")
+//                    Toast.makeText(this, "Bohužiaľ sa nepodalrilio odoslať všetky údaje, skúste to neskôr.", Toast.LENGTH_LONG).show()
+//                }
+//                withContext(Dispatchers.Main) {
+//                    recreate()
+//                }
+//            }
+//        }
+
+//        btnUpdate.setOnClickListener {
+//            viewModel.sendPatientData()
+//        }
+
         btnUpdate.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    PatientRepository.sendPatientData()
-                    withContext(Dispatchers.Main) {
-                        recreate()
-                    }
-                } catch (e: Exception) {
-                    Log.e("Update", "Error sending patient data: ${e.message}")
+            lifecycleScope.launch {
+                val success = viewModel.sendPatientData()
+
+                if (success) {
+                    Toast.makeText(this@PatientActivity, "Údaje boli úspešne odoslané.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this@PatientActivity, "Bohužiaľ sa nepodarilo odoslať všetky údaje, skúste to neskôr.", Toast.LENGTH_LONG).show()
                 }
+
+                recreate()
             }
         }
+
+//        viewModel.sendResult.observe(this) { result ->
+//            result.fold(
+//                onSuccess = {
+//                    Toast.makeText(
+//                        this,
+//                        "Údaje boli úspešne odoslané.",
+//                        Toast.LENGTH_LONG
+//                    ).show()
+//                    recreate()
+//                },
+//                onFailure = {
+//                    Toast.makeText(
+//                        this,
+//                        "Bohužiaľ sa nepodarilo odoslať všetky údaje, skúste to neskôr.",
+//                        Toast.LENGTH_LONG
+//                    ).show()
+//                }
+//            )
+//        }
 
         btnDrawTest.setOnClickListener {
             val intent = Intent(this, WritingTestActivity::class.java)

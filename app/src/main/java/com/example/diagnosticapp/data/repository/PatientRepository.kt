@@ -85,33 +85,8 @@ object PatientRepository {
         }
     }
 
-//    val files = sardine.list("https://poseidon.fei.tuke.sk/remote.php/dav/files/jBlasko/")
-//    files.forEach {
-//        Log.d("WebDAV", "Found: ${it.name}")
-//    }
 
-
-    fun sendPatientData() {
-        val patient = currentPatient ?: run {
-            Log.e("PatientRepository", "No patient exists for sending data.")
-            return
-        }
-
-        val remoteVoicePath = "${patient.disease}/${patient.id}/voice/"
-        for (voiceTask in patient.protocol1Tasks) {
-            uploadFileToNextcloud(remoteVoicePath, voiceTask)
-        }
-
-        val remoteWritingPath = "${patient.disease}/${patient.id}/writing/"
-        for (writingTask in patient.protocol2Tasks) {
-            uploadFileToNextcloud(remoteWritingPath, writingTask)
-        }
-
-        isUpdated = true
-    }
-
-
-    fun uploadFileToNextcloud(remotePath: String, task: TaskData) {
+    fun uploadFileToNextcloud(remotePath: String, task: TaskData): Boolean {
         val sardine = OkHttpSardine()
         sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
         val baseUrl = BuildConfig.URL
@@ -121,13 +96,13 @@ object PatientRepository {
 
         if (filePath == null) {
             Log.e("PatientRepository", "File path is null. Skipping upload.")
-            return
+            return false
         }
 
         val file = File(filePath)
         if (!file.exists() || !file.canRead()) {
             Log.e("PatientRepository", "File does not exist or is unreadable: $filePath")
-            return
+            return false
         }
 
         val fileBytes = file.readBytes()
@@ -139,16 +114,19 @@ object PatientRepository {
         ensureDirectoriesExist(sardine, baseUrl, remotePath.substringBeforeLast("/"))
 
         // 3. Upload file
-        try {
+        return try {
             sardine.put(fullPath, fileBytes)
             Log.i("PatientRepository", "Successfully uploaded: $fullPath")
 
             task.status = TaskStatus.SAVED
+            true
 
         } catch (e: SardineException) {
             Log.e("PatientRepository", "Sardine error while uploading $fileName: ${e.message}")
+            false
         } catch (e: Exception) {
             Log.e("PatientRepository", "Unexpected error during upload of $fileName: ${e.message}")
+            false
         }
     }
 

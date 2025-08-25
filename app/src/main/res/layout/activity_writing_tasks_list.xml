@@ -57,45 +57,45 @@
                 android:id="@+id/btnTask1"
                 android:text="Task 1" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask2"-->
-<!--                android:text="Task 2" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask2"
+                android:text="Task 2" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask3"-->
-<!--                android:text="Task 3" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask3"
+                android:text="Task 3" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask4"-->
-<!--                android:text="Task 4" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask4"
+                android:text="Task 4" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask5"-->
-<!--                android:text="Task 5" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask5"
+                android:text="Task 5" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask6"-->
-<!--                android:text="Task 6" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask6"
+                android:text="Task 6" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask7"-->
-<!--                android:text="Task 7" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask7"
+                android:text="Task 7" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask8"-->
-<!--                android:text="Task 8" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask8"
+                android:text="Task 8" />
 
-<!--            <Button-->
-<!--                style="@style/TaskButtonStyle"-->
-<!--                android:id="@+id/btnTask9"-->
-<!--                android:text="Task 9" />-->
+            <Button
+                style="@style/TaskButtonStyle"
+                android:id="@+id/btnTask9"
+                android:text="Task 9" />
 
 <!--            <Button-->
 <!--                style="@style/TaskButtonStyle"-->

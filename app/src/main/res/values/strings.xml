@@ -48,6 +48,35 @@ len otázkou času, kedy sa na dôležitých cestných ťahoch začne budovať �
     <string name="draw_task_1_name">Písanie "l"</string>
     <string name="draw_task_1_description">5 opakovaní podľa predlohy.</string>
 
+    <string name="draw_task_2_name">Písanie "l"</string>
+    <string name="draw_task_2_description">5 opakovaní podľa predlohy. Úloha má byť písaná čo najvyššou rýchlosťou, ale
+tak aby bol napísaný text zrozumiteľný.</string>
+
+    <string name="draw_task_3_name">Písanie "le"</string>
+    <string name="draw_task_3_description">5 opakovaní podľa predlohy.</string>
+
+    <string name="draw_task_4_name">Písanie "le"</string>
+    <string name="draw_task_4_description">5 opakovaní podľa predlohy. Úloha má byť písaná čo najvyššou rýchlosťou, ale
+tak aby bol napísaný text zrozumiteľný.</string>
+
+    <string name="draw_task_5_name">Písanie "leto"</string>
+    <string name="draw_task_5_description">5 opakovaní podľa predlohy.</string>
+
+    <string name="draw_task_6_name">Písanie "lamoken"</string>
+    <string name="draw_task_6_description">3 opakovania podľa predlohy.</string>
+
+    <string name="draw_task_7_name">Písanie "interpunkcia"</string>
+    <string name="draw_task_7_description">2-3 opakovania podľa predlohy.</string>
+
+    <string name="draw_task_8_name">Písanie "V lete bude teplo a sucho"</string>
+    <string name="draw_task_8_description">1 opakvanie podľa predlohy.</string>
+
+    <string name="draw_task_9_name">Kreslenie čiary</string>
+    <string name="draw_task_9_description">Nakresliť vodorovnú čiaru na šírku papiera.</string>
+
+
+
+
 
     <string-array name="Diseases">
         <item>Encefalopatia</item>

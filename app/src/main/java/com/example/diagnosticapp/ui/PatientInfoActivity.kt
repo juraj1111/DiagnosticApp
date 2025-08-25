@@ -46,11 +46,7 @@ class PatientInfoActivity : AppCompatActivity() {
                     val intent = Intent(this, PatientActivity::class.java)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Bohužiaľ nepodarilo sa vytvoriť pacienta.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this, "Bohužiaľ nepodarilo sa vytvoriť pacienta.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
