@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +17,9 @@ import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.activity.OnBackPressedCallback
 
-class PatientActivity : AppCompatActivity(){
+class PatientActivity : BaseActivity(){
 
     private lateinit var tvId: TextView
     private lateinit var tvInfo: TextView
@@ -131,6 +133,37 @@ class PatientActivity : AppCompatActivity(){
             val intent = Intent(this, WritingTestActivity::class.java)
             startActivity(intent)
         }
+
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.getIsUpdated()) {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                } else {
+                    Toast.makeText(
+                        this@PatientActivity,
+                        "Prosím uložte dáta pred odchodom.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
+
+
+//        findViewById<ImageButton?>(R.id.btnBack)?.setOnClickListener {
+//            if (viewModel.isPatientSaved()) {
+//                finish()
+//            } else {
+//                Toast.makeText(
+//                    this@PatientInfoActivity,
+//                    "Please save first.",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
+
     }
 
 }
+

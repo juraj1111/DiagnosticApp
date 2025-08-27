@@ -10,7 +10,7 @@ import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.repository.WritingTasks
 import com.example.diagnosticapp.viewmodel.DrawingView
 
-class WritingTaskExecutionActivity : AppCompatActivity() {
+class WritingTaskExecutionActivity : BaseActivity() {
 
     private lateinit var taskId: String
 

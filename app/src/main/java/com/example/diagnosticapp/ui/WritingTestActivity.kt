@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.viewmodel.DrawingView
 
-class WritingTestActivity : AppCompatActivity(){
+class WritingTestActivity : BaseActivity(){
 
     private lateinit var btnErase : Button
 

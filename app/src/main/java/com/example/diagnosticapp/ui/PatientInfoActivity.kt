@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 
-class PatientInfoActivity : AppCompatActivity() {
+class PatientInfoActivity : BaseActivity() {
 
     private lateinit var viewModel: SharedPatientViewModel
 
@@ -31,7 +31,16 @@ class PatientInfoActivity : AppCompatActivity() {
         btnSave.setOnClickListener {
             saveDataAndClose()
         }
+
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.title = "Pacient – Info"
     }
+
+//    override fun onSupportNavigateUp(): Boolean {
+//        onBackPressed() // behaves same as system back
+//        return true
+//    }
+
 
     private fun saveDataAndClose() {
         val age = etAge.text.toString().toIntOrNull()

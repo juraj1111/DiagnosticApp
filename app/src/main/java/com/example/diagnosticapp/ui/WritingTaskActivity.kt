@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.repository.WritingTasks
 
-class WritingTaskActivity : AppCompatActivity() {
+class WritingTaskActivity : BaseActivity() {
 
     private lateinit var taskId: String
 

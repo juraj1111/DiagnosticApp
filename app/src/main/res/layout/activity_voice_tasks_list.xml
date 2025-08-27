@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,26 +21,26 @@
             android:gravity="center_vertical"
             android:paddingBottom="16dp">
 
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@android:drawable/ic_menu_revert"
-                android:contentDescription="Back"/>
+<!--            <ImageButton-->
+<!--                android:id="@+id/btnBack"-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:background="?attr/selectableItemBackground"-->
+<!--                android:src="@drawable/arrow"-->
+<!--                android:contentDescription="Back" />-->
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Voice tasks"
+                android:text="Hlasové úlohy"
                 android:textSize="40sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:gravity="center"
-                android:layout_marginLeft="-60dp"
                 android:layout_weight="1" />
         </LinearLayout>
+<!--        android:layout_marginLeft="-60dp"-->
 
         <!-- GridLayout with 2 Columns -->
         <GridLayout
@@ -55,57 +57,57 @@
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask1"
-                android:text="Task 1" />
+                android:text="Úloha 1" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask2"
-                android:text="Task 2" />
+                android:text="Úloha 2" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask3"
-                android:text="Task 3" />
+                android:text="Úloha 3" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask4"
-                android:text="Task 4" />
+                android:text="Úloha 4" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask5"
-                android:text="Task 5" />
+                android:text="Úloha 5" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask6"
-                android:text="Task 6" />
+                android:text="Úloha 6" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask7"
-                android:text="Task 7" />
+                android:text="Úloha 7" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask8"
-                android:text="Task 8" />
+                android:text="Úloha 8" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask9"
-                android:text="Task 9" />
+                android:text="Úloha 9" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask10"
-                android:text="Task 10" />
+                android:text="Úloha 10" />
 
             <Button
                 style="@style/TaskButtonStyle"
                 android:id="@+id/btnTask11"
-                android:text="Task 11" />
+                android:text="Úloha 11" />
 
         </GridLayout>
     </LinearLayout>

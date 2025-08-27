@@ -7,24 +7,31 @@ android:layout_height="match_parent"
 android:gravity="center"
 android:padding="16dp">
 
-<TextView
-    android:id="@+id/tv_task_name"
-    android:textSize="40sp"
-    android:textStyle="bold"
-    android:layout_width="350dp"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:paddingBottom="8dp"/>
+    <TextView
+        android:id="@+id/tv_task_name"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:textColor="@color/black"/>
 
-<TextView
-    android:id="@+id/tv_task_description"
-    android:textSize="40sp"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    android:maxHeight="300dp"
-    android:gravity="center"
-    android:textAlignment="center"
-    android:padding="8dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/tv_task_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textSize="40sp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:scrollbars="vertical"
+            android:textColor="@color/black"/>
+    </ScrollView>
 
 </LinearLayout>

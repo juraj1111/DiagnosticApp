@@ -13,7 +13,7 @@ import com.example.diagnosticapp.data.model.TaskData
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 
-class WritingTasksListActivity : AppCompatActivity() {
+class WritingTasksListActivity : BaseActivity() {
 
     private lateinit var viewModel : SharedPatientViewModel
     private lateinit var taskButtons: Map<String, Button>
@@ -27,10 +27,10 @@ class WritingTasksListActivity : AppCompatActivity() {
         val patient = viewModel.getCurrentPatient()
         taskMap = patient?.protocol2Tasks?.associateBy { it.id }!!
 
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            finish() // This will close the current activity and return to the previous one
-        }
+//        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+//        btnBack.setOnClickListener {
+//            finish() // This will close the current activity and return to the previous one
+//        }
 
         setupTaskButtons()
 

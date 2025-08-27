@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.DiagnosticApp" parent="Theme.AppCompat.Light.NoActionBar"/>
+    <style name="Theme.DiagnosticApp" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/green</item>
+        <!-- Text/icon color -->
+<!--        <item name="android:textColorPrimary">@android:color/white</item>-->
+<!--        <item name="android:textColor">@color/black</item>-->
+    </style>
 </resources>

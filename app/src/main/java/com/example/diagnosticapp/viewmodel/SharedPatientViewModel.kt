@@ -33,11 +33,11 @@ class SharedPatientViewModel : ViewModel() {
         viewModelScope.launch {
             val voiceTasksData = VoiceTasks
                 .getAllTasks()
-                .map { voiceTask -> TaskData(id = voiceTask.id) }  // default status is UNCOMPLETED
+                .map { voiceTask -> TaskData(id = voiceTask.id, type = 1) }  // default status is UNCOMPLETED
 
             val writingTasksData = WritingTasks
                 .getAllTasks()
-                .map { voiceTask -> TaskData(id = voiceTask.id) }  // default status is UNCOMPLETED
+                .map { voiceTask -> TaskData(id = voiceTask.id, type = 2) }  // default status is UNCOMPLETED
 
             val protocol1Tasks = voiceTasksData.toMutableList()
             val protocol2Tasks = writingTasksData.toMutableList()
@@ -70,6 +70,7 @@ class SharedPatientViewModel : ViewModel() {
     fun createExistingPatient(id: Int, disease: String, onResult: (Boolean) -> Unit){
         viewModelScope.launch {
             val patient: Patient? = PatientRepository.fetchPatient(id, disease)
+            PatientRepository.isUpdated = true
 
             if (patient == null) {
                 onResult(false)

@@ -8,7 +8,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
 
-class VoiceTaskActivity : AppCompatActivity() {
+class VoiceTaskActivity : BaseActivity() {
 
     private lateinit var taskId: String
 

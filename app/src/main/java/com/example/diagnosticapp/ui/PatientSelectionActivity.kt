@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 
-class PatientSelectionActivity : AppCompatActivity() {
+class PatientSelectionActivity : BaseActivity() {
 
     private lateinit var viewModel: SharedPatientViewModel
 

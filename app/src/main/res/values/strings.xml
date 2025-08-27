@@ -26,7 +26,7 @@
     <string name="task_8_description">Opakovať PA-PA-PA <b>najrýchlejšou</b> možnou rýchlosťou (5x-8x).</string>
 
     <string name="task_9_name">Čítanie viet</string>
-    <string name="task_9_description">Čítať doleuvedené vety. Slovo podčiarknuté a zvýraznené veľkými písmenami zdôrazniť.\nDnes sme to už nestihli, ale možno <u>ZAJTRA</u> navštívime všetkých známych.\nAj keď sme spolu telefonovali možno zajtra <u>NAVŠTÍVIME</u> všetkých známych\nPríbuzných sme už navštívili, možno zajtra navštívime všetkých <u>ZNÁMYCH</u>.</string>
+    <string name="task_9_description">Čítať doleuvedené vety. Slovo podčiarknuté a zvýraznené veľkými písmenami zdôrazniť.\n\n\nDnes sme to už nestihli, ale možno <u>ZAJTRA</u> navštívime všetkých známych.\nAj keď sme spolu telefonovali možno zajtra <u>NAVŠTÍVIME</u> všetkých známych\nPríbuzných sme už navštívili, možno zajtra navštívime všetkých <u>ZNÁMYCH</u>.</string>
 
     <string name="task_10_name">Čítanie textu</string>
     <string name="task_10_description">Ešte aj koncom 19. storočia domáci aj pocestní prechádzali cez radové typy dedín, aj cez

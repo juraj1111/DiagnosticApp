@@ -3,6 +3,7 @@ package com.example.diagnosticapp.data.repository
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.collection.emptyLongSet
 import com.example.diagnosticapp.data.model.Patient
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.BuildConfig
@@ -92,7 +93,11 @@ object PatientRepository {
         val baseUrl = BuildConfig.URL
 
         val filePath: String? = task.resultFilePath
-        val fileName: String = task.id
+        val  fileName: String
+        fileName = if(task.type == 1)
+            task.id + ".3gp"
+        else
+            task.id + ".svc"
 
         if (filePath == null) {
             Log.e("PatientRepository", "File path is null. Skipping upload.")
