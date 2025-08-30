@@ -170,7 +170,7 @@ object PatientRepository {
             nextId
         } catch (e: Exception) {
             Log.e("PatientRepository", "Error getting next patient ID: ${e.message}", e)
-            1 // default if none exist or error occurs
+            -1 // default if none exist or error occurs
         }
     }
 

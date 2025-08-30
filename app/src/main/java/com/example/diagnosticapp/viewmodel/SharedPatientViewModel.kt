@@ -29,7 +29,7 @@ class SharedPatientViewModel : ViewModel() {
     }
 
 
-    fun createNewPatient(age: Int, sex: String, onResult: (Boolean) -> Unit){
+    fun createNewPatient(age: Int, sex: String, disease: String, onResult: (Boolean) -> Unit){
         viewModelScope.launch {
             val voiceTasksData = VoiceTasks
                 .getAllTasks()
@@ -42,11 +42,16 @@ class SharedPatientViewModel : ViewModel() {
             val protocol1Tasks = voiceTasksData.toMutableList()
             val protocol2Tasks = writingTasksData.toMutableList()
 
-            val disease = "encylopathy" //TODO doplanie od pouzivatela
             val path = disease
 
+            val nextId: Int = PatientRepository.getNextPatientId(path)
+            if(nextId == -1){
+                onResult(false)
+                return@launch
+            }
+
             val newPatient = Patient(
-                id = PatientRepository.getNextPatientId(path).toInt(),
+                id = nextId,
                 age = age,
                 sex = sex,
                 disease = disease,

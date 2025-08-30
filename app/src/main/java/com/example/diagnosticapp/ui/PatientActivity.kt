@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.activity.OnBackPressedCallback
+import com.example.diagnosticapp.utils.DiseaseMapping
 
 class PatientActivity : BaseActivity(){
 
@@ -50,8 +51,11 @@ class PatientActivity : BaseActivity(){
         btnUpdate = findViewById(R.id.btnUpdateData)
         btnDrawTest = findViewById(R.id.btnDrawTest)
 
-        tvId.text = patientId.toString()
-        tvInfo.text = "${patient?.sex}, ${patient?.age} rokov"
+        tvId.text = String.format("%04d", patientId)
+
+        if (patient != null) {
+            tvInfo.text = "${patient.sex}, ${patient.age} rokov, ${DiseaseMapping.getSlovakName(patient.disease)}"
+        }
 
         btnVoice.text = "HLASOVÝ PROTOKOL $voiceTaskSaved/$voiceTaskNumber"
         btnWriting.text = "PÍSACÍ PROTOKOL $writingTaskSaved/$writingTaskNumber"
@@ -138,8 +142,12 @@ class PatientActivity : BaseActivity(){
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (viewModel.getIsUpdated()) {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+//                    isEnabled = false
+//                    onBackPressedDispatcher.onBackPressed()
+                    val intent = Intent(this@PatientActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
                 } else {
                     Toast.makeText(
                         this@PatientActivity,

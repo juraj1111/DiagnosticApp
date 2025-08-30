@@ -43,6 +43,12 @@
 
     </RadioGroup>
 
+    <Spinner
+        android:id="@+id/spinner_options"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
     <!-- Save Button -->
     <Button
         android:id="@+id/btn_save"
