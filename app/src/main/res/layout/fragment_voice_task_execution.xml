@@ -25,16 +25,32 @@
             android:src="@drawable/restart"
             android:layout_margin="8dp" />
 
+        <TextView
+            android:id="@+id/time_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textSize="50sp"/>
+
         <ImageView
-            android:id="@+id/play_button"
+            android:id="@+id/record_button"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginStart="80dp"
-            android:layout_marginEnd="80dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="30dp"
             android:clickable="true"
             android:contentDescription="Play"
-            android:src="@drawable/mic_circle"
-/>
+            android:src="@drawable/mic_circle" />
+
+        <ImageView
+            android:id="@+id/pause_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="60dp"
+            android:clickable="true"
+            android:contentDescription="Pause"
+            android:src="@drawable/pause" />
 
         <ImageView
             android:id="@+id/save_button"
