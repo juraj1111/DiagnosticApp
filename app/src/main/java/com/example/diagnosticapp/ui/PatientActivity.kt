@@ -3,8 +3,10 @@ package com.example.diagnosticapp.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import com.example.diagnosticapp.utils.DiseaseMapping
 
 class PatientActivity : BaseActivity(){
@@ -28,6 +31,7 @@ class PatientActivity : BaseActivity(){
     private lateinit var btnVoice: Button
     private lateinit var btnUpdate: Button
     private lateinit var btnDrawTest: Button
+    private lateinit var progressBar: ProgressBar
     private lateinit var viewModel : SharedPatientViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +48,7 @@ class PatientActivity : BaseActivity(){
         val writingTaskSaved = patient?.protocol2Tasks
             ?.count { it.status == TaskStatus.SAVED }
 
+        progressBar = findViewById(R.id.progressBar)
         tvId = findViewById(R.id.tvId)
         tvInfo = findViewById(R.id.tvInfo)
         btnWriting = findViewById(R.id.btnWritingProtocol)
@@ -101,7 +106,9 @@ class PatientActivity : BaseActivity(){
 
         btnUpdate.setOnClickListener {
             lifecycleScope.launch {
+                progressBar.visibility = View.VISIBLE
                 val success = viewModel.sendPatientData()
+                progressBar.visibility = View.GONE
 
                 if (success) {
                     Toast.makeText(this@PatientActivity, "Údaje boli úspešne odoslané.", Toast.LENGTH_LONG).show()
@@ -140,20 +147,44 @@ class PatientActivity : BaseActivity(){
 
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                if (viewModel.getIsUpdated()) {
+//                    val intent = Intent(this@PatientActivity, MainActivity::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                    startActivity(intent)
+//                    finish()
+//                } else {
+//                    Toast.makeText(
+//                        this@PatientActivity,
+//                        "Prosím uložte dáta pred odchodom.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
             override fun handleOnBackPressed() {
                 if (viewModel.getIsUpdated()) {
-//                    isEnabled = false
-//                    onBackPressedDispatcher.onBackPressed()
+                    // Safe to leave directly
                     val intent = Intent(this@PatientActivity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(
-                        this@PatientActivity,
-                        "Prosím uložte dáta pred odchodom.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    // Show a confirmation dialog
+                    AlertDialog.Builder(this@PatientActivity)
+                        .setTitle("Neuložené dáta")
+                        .setMessage("Naozaj chcete odísť bez uloženia?")
+                        .setPositiveButton("Áno") { _, _ ->
+                            // User confirmed → leave anyway
+                            val intent = Intent(this@PatientActivity, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
+                        }
+                        .setNegativeButton("Nie") { dialog, _ ->
+                            // Just dismiss and stay on screen
+                            dialog.dismiss()
+                        }
+                        .show()
                 }
             }
         })

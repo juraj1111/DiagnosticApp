@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
@@ -27,6 +28,7 @@ class PatientInfoActivity : BaseActivity() {
     private lateinit var radioSexGroup: RadioGroup
     private lateinit var btnSave: Button
     private lateinit var spinner: Spinner
+    private lateinit var progressBar: ProgressBar
 
     private var selected_disease: String? = null
 
@@ -34,6 +36,7 @@ class PatientInfoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patient_info)
 
+        progressBar = findViewById(R.id.progressBar)
         etAge = findViewById(R.id.et_age)
         radioSexGroup = findViewById(R.id.radioSexGroup)
         btnSave = findViewById(R.id.btn_save)
@@ -84,11 +87,14 @@ class PatientInfoActivity : BaseActivity() {
         if (age != null && selectedSexId != -1 && selected_disease != null) {
             val selectedSex = findViewById<RadioButton>(selectedSexId).text.toString()
 
+            progressBar.visibility = View.VISIBLE
             viewModel.createNewPatient(age, selectedSex, selected_disease!!) { success ->
                 if (success) {
+                    progressBar.visibility = View.GONE
                     val intent = Intent(this, PatientActivity::class.java)
                     startActivity(intent)
                 } else {
+                    progressBar.visibility = View.GONE
                     Toast.makeText(this, "Bohužiaľ nepodarilo sa vytvoriť pacienta.", Toast.LENGTH_SHORT).show()
                 }
             }

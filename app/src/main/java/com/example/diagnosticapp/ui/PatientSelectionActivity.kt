@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.diagnosticapp.utils.DiseaseMapping
 
@@ -24,6 +25,7 @@ class PatientSelectionActivity : BaseActivity() {
     private lateinit var etId: EditText
     private lateinit var btnFindPatient: Button
     private lateinit var spinner: Spinner
+    private lateinit var progressBar: ProgressBar
 
     private var selected_disease: String? = null
 
@@ -31,7 +33,7 @@ class PatientSelectionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patient_selection)
 
-
+        progressBar = findViewById(R.id.progressBar)
 
         etId = findViewById(R.id.et_id)
         btnFindPatient = findViewById(R.id.btn_find_patient)
@@ -54,11 +56,14 @@ class PatientSelectionActivity : BaseActivity() {
             }
 
             // ✅ This calls ViewModel, which handles coroutine inside
+            progressBar.visibility = View.VISIBLE
             viewModel.createExistingPatient(id, disease) { success ->
                 if (success) {
+                    progressBar.visibility = View.GONE
                     val intent = Intent(this, PatientActivity::class.java)
                     startActivity(intent)
                 } else {
+                    progressBar.visibility = View.GONE
                     Toast.makeText(
                         this,
                         "Bohužiaľ zadaný pacient nebol nájdený.",
