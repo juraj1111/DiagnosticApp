@@ -69,6 +69,18 @@ object PatientRepository {
             task.status = TaskStatus.COMPLETED
             isUpdated = false
             Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val idFormatted = String.format("%04d", currentPatient!!.id)
+                val remotePath = "${currentPatient!!.disease}/$idFormatted/voice/"
+                if (uploadFileToNextcloud(remotePath, task)) {
+                    updatePatient(currentPatient!!)
+                    isUpdated = true
+                    Log.d("PatientRepository", "Auto-sync success for task $taskId")
+                } else {
+                    Log.e("PatientRepository", "Auto-sync failed for task $taskId")
+                }
+            }
         } else {
             Log.e("PatientRepository", "Voice task $taskId not found.")
         }
@@ -81,6 +93,19 @@ object PatientRepository {
             task.status = TaskStatus.COMPLETED
             isUpdated = false
             Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val idFormatted = String.format("%04d", currentPatient!!.id)
+                val remotePath = "${currentPatient!!.disease}/$idFormatted/writing/"
+                if (uploadFileToNextcloud(remotePath, task)) {
+                    updatePatient(currentPatient!!)
+                    isUpdated = true
+                    Log.d("PatientRepository", "Auto-sync success for task $taskId")
+                } else {
+                    Log.e("PatientRepository", "Auto-sync failed for task $taskId")
+                }
+            }
+
         } else {
             Log.e("PatientRepository", "Voice task $taskId not found.")
         }
@@ -95,7 +120,7 @@ object PatientRepository {
         val filePath: String? = task.resultFilePath
         val  fileName: String
         fileName = if(task.type == 1)
-            task.id + ".3gp"
+            task.id + ".wav"
         else
             task.id + ".svc"
 

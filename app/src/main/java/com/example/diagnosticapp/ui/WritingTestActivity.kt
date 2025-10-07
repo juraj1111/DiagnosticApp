@@ -2,9 +2,8 @@ package com.example.diagnosticapp.ui
 
 import android.os.Bundle
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
-import com.example.diagnosticapp.viewmodel.DrawingView
+import com.example.diagnosticapp.viewmodel.WritingViewModel
 
 class WritingTestActivity : BaseActivity(){
 
@@ -14,11 +13,11 @@ class WritingTestActivity : BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_writing_test)
 
-        val drawingView = findViewById<DrawingView>(R.id.drawingView)
+        val writingViewModel = findViewById<WritingViewModel>(R.id.drawingView)
         val btnErase = findViewById<Button>(R.id.btnErase)
 
         btnErase.setOnClickListener {
-            drawingView.clear()
+            writingViewModel.clear()
         }
 //
 //        saveButton.setOnClickListener {

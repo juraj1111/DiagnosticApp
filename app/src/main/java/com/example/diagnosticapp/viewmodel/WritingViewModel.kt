@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.example.diagnosticapp.data.repository.PatientRepository
 import java.io.File
-class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class WritingViewModel(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val path = Path()
     private val paint = Paint().apply {

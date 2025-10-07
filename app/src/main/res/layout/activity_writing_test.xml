@@ -13,7 +13,7 @@
         android:textSize="30sp"
         android:text="Vymazať"/>
 
-    <com.example.diagnosticapp.viewmodel.DrawingView
+    <com.example.diagnosticapp.viewmodel.WritingViewModel
         android:id="@+id/drawingView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -5,10 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.repository.WritingTasks
-import com.example.diagnosticapp.viewmodel.DrawingView
+import com.example.diagnosticapp.viewmodel.WritingViewModel
 
 class WritingTaskExecutionActivity : BaseActivity() {
 
@@ -27,7 +26,7 @@ class WritingTaskExecutionActivity : BaseActivity() {
         }
 
 
-        val drawingView = findViewById<DrawingView>(R.id.drawingView)
+        val writingViewModel = findViewById<WritingViewModel>(R.id.drawingView)
         val btnErase = findViewById<Button>(R.id.btnErase)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
@@ -42,11 +41,11 @@ class WritingTaskExecutionActivity : BaseActivity() {
         }
 
         btnErase.setOnClickListener {
-            drawingView.clear()
+            writingViewModel.clear()
         }
 
         btnSave.setOnClickListener(){
-            drawingView.saveWriting(taskId)
+            writingViewModel.saveWriting(taskId)
             val intent = Intent(this, WritingTasksListActivity::class.java)
             startActivity(intent)
         }
