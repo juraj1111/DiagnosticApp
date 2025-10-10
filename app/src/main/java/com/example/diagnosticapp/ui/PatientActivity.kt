@@ -41,12 +41,10 @@ class PatientActivity : BaseActivity(){
         viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
         val patient = viewModel.getCurrentPatient()
         val patientId = patient?.id
-        val voiceTaskNumber = patient?.protocol1Tasks?.size
-        val voiceTaskSaved = patient?.protocol1Tasks
-            ?.count { it.status == TaskStatus.SAVED }
-        val writingTaskNumber = patient?.protocol2Tasks?.size
-        val writingTaskSaved = patient?.protocol2Tasks
-            ?.count { it.status == TaskStatus.SAVED }
+        val voiceTaskNumber = patient?.protocols?.get(0)?.taskDataList?.size
+        val voiceTaskSaved = patient?.protocols?.get(0)?.taskDataList?.count({ it.status == TaskStatus.SAVED })
+        val writingTaskNumber = patient?.protocols?.get(1)?.taskDataList?.size
+        val writingTaskSaved = patient?.protocols?.get(1)?.taskDataList?.count { it.status == TaskStatus.SAVED }
 
         progressBar = findViewById(R.id.progressBar)
         tvId = findViewById(R.id.tvId)
@@ -66,12 +64,18 @@ class PatientActivity : BaseActivity(){
         btnWriting.text = "PÍSACÍ PROTOKOL $writingTaskSaved/$writingTaskNumber"
 
         btnVoice.setOnClickListener {
-            val intent = Intent(this, VoiceTasksListActivity::class.java)
+            val intent = Intent(this, TaskListActivity::class.java)
+            if (patient != null) {
+                viewModel.setCurrentProtocol(patient.protocols[0])
+            }
             startActivity(intent)
         }
 
         btnWriting.setOnClickListener {
-            val intent = Intent(this, WritingTasksListActivity::class.java)
+            val intent = Intent(this, TaskListActivity::class.java)
+            if (patient != null) {
+                viewModel.setCurrentProtocol(patient.protocols[1])
+            }
             startActivity(intent)
         }
 

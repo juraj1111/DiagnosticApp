@@ -7,6 +7,7 @@ import androidx.collection.emptyLongSet
 import com.example.diagnosticapp.data.model.Patient
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.BuildConfig
+import com.example.diagnosticapp.data.model.ProtocolData
 import com.example.diagnosticapp.data.model.TaskData
 
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
@@ -27,6 +28,7 @@ import kotlinx.serialization.json.Json
 object PatientRepository {
 
     var currentPatient: Patient? = null
+    var currentProtocol: ProtocolData? = null
 
     var isUpdated: Boolean = true
 
@@ -63,7 +65,7 @@ object PatientRepository {
 
 
     fun updateVoiceTask(taskId: String, filePath: String?) {
-        val task = currentPatient?.protocol1Tasks?.find { it.id == taskId }
+        val task = currentProtocol?.taskDataList?.find { it.id == taskId }
         if (task != null) {
             task.resultFilePath = filePath
             task.status = TaskStatus.COMPLETED
@@ -87,7 +89,7 @@ object PatientRepository {
     }
 
     fun updateWritingTask(taskId: String, filePath: String?) {
-        val task = currentPatient?.protocol2Tasks?.find { it.id == taskId }
+        val task = currentProtocol?.taskDataList?.find { it.id == taskId }
         if (task != null) {
             task.resultFilePath = filePath
             task.status = TaskStatus.COMPLETED

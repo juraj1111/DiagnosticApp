@@ -25,7 +25,7 @@ class WritingTasksListActivity : BaseActivity() {
 
         viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
         val patient = viewModel.getCurrentPatient()
-        taskMap = patient?.protocol2Tasks?.associateBy { it.id }!!
+        taskMap = patient?.protocols?.get(1)?.taskDataList?.associateBy { it.id }!!
 
 //        val btnBack = findViewById<ImageButton>(R.id.btnBack)
 //        btnBack.setOnClickListener {
@@ -76,7 +76,7 @@ class WritingTasksListActivity : BaseActivity() {
 
     private fun updateButtonColors() {
         val patient = viewModel.getCurrentPatient()
-        val taskMap = patient?.protocol2Tasks?.associateBy { it.id } ?: return
+        val taskMap = patient?.protocols?.get(1)?.taskDataList?.associateBy { it.id } ?: return
 
         taskButtons.forEach { (taskId, button) ->
             val status = taskMap[taskId]?.status ?: TaskStatus.UNCOMPLETED

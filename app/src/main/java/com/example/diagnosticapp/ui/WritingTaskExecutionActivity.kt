@@ -34,6 +34,7 @@ class WritingTaskExecutionActivity : BaseActivity() {
 
         val imageView = findViewById<ImageView>(R.id.backgroundImage)
         if (task != null) {
+            if(task.imageId != null)
             imageView.setImageResource(task.imageId)
         } else {
             Log.e("TaskError", "Task with id=$taskId not found!")

@@ -25,12 +25,7 @@ class VoiceTasksListActivity : BaseActivity() {
 
         viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
         val patient = viewModel.getCurrentPatient()
-        taskMap = patient?.protocol1Tasks?.associateBy { it.id }!!
-
-//        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-//        btnBack.setOnClickListener {
-//            finish() // This will close the current activity and return to the previous one
-//        }
+        taskMap = patient?.protocols?.get(0)?.taskDataList?.associateBy { it.id }!!
 
         setupTaskButtons()
 
@@ -78,7 +73,7 @@ class VoiceTasksListActivity : BaseActivity() {
 
     private fun updateButtonColors() {
         val patient = viewModel.getCurrentPatient()
-        val taskMap = patient?.protocol1Tasks?.associateBy { it.id } ?: return
+        val taskMap = patient?.protocols?.get(0)?.taskDataList?.associateBy { it.id } ?: return
 
         taskButtons.forEach { (taskId, button) ->
             val status = taskMap[taskId]?.status ?: TaskStatus.UNCOMPLETED

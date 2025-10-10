@@ -1,23 +1,20 @@
 package com.example.diagnosticapp.viewmodel
 
-import android.text.BoringLayout
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.diagnosticapp.data.model.Patient
 import com.example.diagnosticapp.data.model.TaskData
 import com.example.diagnosticapp.data.repository.PatientRepository
-import com.example.diagnosticapp.data.repository.VoiceTasks
-import com.example.diagnosticapp.data.repository.WritingTasks
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import com.example.diagnosticapp.data.model.ProtocolData
+import com.example.diagnosticapp.data.model.ProtocolDefinition
 import com.example.diagnosticapp.data.model.TaskStatus
-import com.example.diagnosticapp.data.repository.PatientRepository.isUpdated
+import com.example.diagnosticapp.data.repository.ProtocolRepository
 import kotlinx.coroutines.withContext
+import java.text.Normalizer
 
 class SharedPatientViewModel : ViewModel() {
 
@@ -28,20 +25,17 @@ class SharedPatientViewModel : ViewModel() {
         PatientRepository.testWebDAVConnection()
     }
 
+    fun getCurrentProtocol() : ProtocolData {
+        val protocol = PatientRepository.currentProtocol
+        return requireNotNull(protocol) { "Protocol not found." }
+    }
+
+    fun setCurrentProtocol(protocol: ProtocolData) {
+        PatientRepository.currentProtocol = protocol
+    }
 
     fun createNewPatient(age: Int, sex: String, disease: String, onResult: (Boolean) -> Unit){
         viewModelScope.launch {
-            val voiceTasksData = VoiceTasks
-                .getAllTasks()
-                .map { voiceTask -> TaskData(id = voiceTask.id, type = 1) }  // default status is UNCOMPLETED
-
-            val writingTasksData = WritingTasks
-                .getAllTasks()
-                .map { voiceTask -> TaskData(id = voiceTask.id, type = 2) }  // default status is UNCOMPLETED
-
-            val protocol1Tasks = voiceTasksData.toMutableList()
-            val protocol2Tasks = writingTasksData.toMutableList()
-
             val path = disease
 
             val nextId: Int = PatientRepository.getNextPatientId(path)
@@ -55,8 +49,7 @@ class SharedPatientViewModel : ViewModel() {
                 age = age,
                 sex = sex,
                 disease = disease,
-                protocol1Tasks = protocol1Tasks,
-                protocol2Tasks = protocol2Tasks
+                protocols = createPatientProtocols()
             )
 
             PatientRepository.currentPatient = newPatient
@@ -64,6 +57,24 @@ class SharedPatientViewModel : ViewModel() {
 
             val success =  PatientRepository.updatePatient(newPatient)
             onResult(success)
+        }
+    }
+
+    fun createPatientProtocols(): List<ProtocolData> {
+        return ProtocolRepository.protocols.map { definition ->
+            val taskDataList = definition.tasks.map { taskDef ->
+                TaskData(
+                    id = taskDef.id,
+                    status = TaskStatus.UNCOMPLETED,
+                    resultFilePath = null,
+                    type = taskDef.type
+                )
+            }.toMutableList()
+
+            ProtocolData(
+                protocolName = definition.name,
+                taskDataList = taskDataList
+            )
         }
     }
 
@@ -98,17 +109,14 @@ class SharedPatientViewModel : ViewModel() {
         var success = true
         val idFormatted: String = String.format("%04d", patient.id)
 
-        val remoteVoicePath = "${patient.disease}/${idFormatted}/voice/"
-        for (voiceTask in patient.protocol1Tasks.filter { it.status == TaskStatus.COMPLETED }) {
-            if (!PatientRepository.uploadFileToNextcloud(remoteVoicePath, voiceTask)) {
-                success = false
-            }
-        }
+        for (protocol in patient.protocols){
+            val sanitizedFolderName = sanitizeFolderName(protocol.protocolName)
+            val remoteVoicePath = "${patient.disease}/${idFormatted}/${sanitizedFolderName}/"
 
-        val remoteWritingPath = "${patient.disease}/${idFormatted}/writing/"
-        for (writingTask in patient.protocol2Tasks.filter { it.status == TaskStatus.COMPLETED }) {
-            if (!PatientRepository.uploadFileToNextcloud(remoteWritingPath, writingTask)) {
-                success = false
+            for (task in protocol.taskDataList.filter { it.status == TaskStatus.COMPLETED }) {
+                if (!PatientRepository.uploadFileToNextcloud(remoteVoicePath, task)) {
+                    success = false
+                }
             }
         }
 
@@ -118,6 +126,20 @@ class SharedPatientViewModel : ViewModel() {
         }
 
         success
+    }
+
+    fun sanitizeFolderName(name: String): String {
+        // 1. Remove accents (e.g. "Hlasový" → "Hlasovy")
+        val normalized = Normalizer.normalize(name, Normalizer.Form.NFD)
+            .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
+
+        // 2. Replace spaces with underscores
+        val noSpaces = normalized.replace(" ", "_")
+
+        // 3. Remove unsafe symbols (keep letters, numbers, underscores, and hyphens)
+        val safe = noSpaces.replace("[^A-Za-z0-9_\\-]".toRegex(), "")
+
+        return safe
     }
 
 }
