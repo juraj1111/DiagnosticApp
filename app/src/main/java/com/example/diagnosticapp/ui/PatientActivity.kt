@@ -2,55 +2,53 @@ package com.example.diagnosticapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.ImageButton
+import android.widget.GridLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.model.TaskStatus
-import com.example.diagnosticapp.data.repository.PatientRepository
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
-import kotlinx.coroutines.Dispatchers
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import com.example.diagnosticapp.data.model.ProtocolData
+import com.example.diagnosticapp.data.model.ProtocolDefinition
+import com.example.diagnosticapp.data.model.TaskData
 import com.example.diagnosticapp.utils.DiseaseMapping
+import com.example.diagnosticapp.viewmodel.ProtocolViewModel
 
-class PatientActivity : BaseActivity(){
+class PatientActivity : BaseActivity(), CreateProtocolDialogFragment.OnProtocolCreatedListener, DeleteProtocolFragment.DeleteProtocolListener{
 
     private lateinit var tvId: TextView
     private lateinit var tvInfo: TextView
     private lateinit var btnWriting: Button
     private lateinit var btnVoice: Button
     private lateinit var btnUpdate: Button
+    private lateinit var btnNewProtocol: Button
     private lateinit var btnDrawTest: Button
     private lateinit var progressBar: ProgressBar
-    private lateinit var viewModel : SharedPatientViewModel
+    private lateinit var patientViewModel : PatientViewModel
+    private lateinit var protocolViewModel : ProtocolViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patient)
 
-        viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
-        val patient = viewModel.getCurrentPatient()
+        patientViewModel = ViewModelProvider(this).get(PatientViewModel::class.java)
+        protocolViewModel = ViewModelProvider(this).get(ProtocolViewModel::class.java)
+        val patient = patientViewModel.getCurrentPatient()
         val patientId = patient?.id
-        val voiceTaskNumber = patient?.protocols?.get(0)?.taskDataList?.size
-        val voiceTaskSaved = patient?.protocols?.get(0)?.taskDataList?.count({ it.status == TaskStatus.SAVED })
-        val writingTaskNumber = patient?.protocols?.get(1)?.taskDataList?.size
-        val writingTaskSaved = patient?.protocols?.get(1)?.taskDataList?.count { it.status == TaskStatus.SAVED }
 
         progressBar = findViewById(R.id.progressBar)
         tvId = findViewById(R.id.tvId)
         tvInfo = findViewById(R.id.tvInfo)
-        btnWriting = findViewById(R.id.btnWritingProtocol)
-        btnVoice = findViewById(R.id.btnVoiceProtocol)
+        btnNewProtocol = findViewById(R.id.btnNewProtocol)
         btnUpdate = findViewById(R.id.btnUpdateData)
         btnDrawTest = findViewById(R.id.btnDrawTest)
 
@@ -60,26 +58,13 @@ class PatientActivity : BaseActivity(){
             tvInfo.text = "${patient.sex}, ${patient.age} rokov, ${DiseaseMapping.getSlovakName(patient.disease)}"
         }
 
-        btnVoice.text = "HLASOVÝ PROTOKOL $voiceTaskSaved/$voiceTaskNumber"
-        btnWriting.text = "PÍSACÍ PROTOKOL $writingTaskSaved/$writingTaskNumber"
+        setupProtocolButtons()
 
-        btnVoice.setOnClickListener {
-            val intent = Intent(this, TaskListActivity::class.java)
-            if (patient != null) {
-                viewModel.setCurrentProtocol(patient.protocols[0])
-            }
-            startActivity(intent)
+        btnNewProtocol.setOnClickListener {
+            CreateProtocolDialogFragment().show(supportFragmentManager, "CreateProtocolDialog")
         }
 
-        btnWriting.setOnClickListener {
-            val intent = Intent(this, TaskListActivity::class.java)
-            if (patient != null) {
-                viewModel.setCurrentProtocol(patient.protocols[1])
-            }
-            startActivity(intent)
-        }
-
-        if(viewModel.getIsUpdated() == true){
+        if(patientViewModel.getIsUpdated() == true){
             btnUpdate.text = "Aktuálne"
             btnUpdate.isEnabled = false
             btnUpdate.setBackgroundColor(getColor(R.color.green))
@@ -89,29 +74,10 @@ class PatientActivity : BaseActivity(){
             btnUpdate.setBackgroundColor(getColor(R.color.yellow))
         }
 
-//        btnUpdate.setOnClickListener {
-//            lifecycleScope.launch(Dispatchers.IO) {
-//                try {
-//                    if(!viewModel.sendPatientData())
-//                        Toast.makeText(this, "Bohužiaľ sa nepodalrilio odoslať všetky údaje, skúste to neskôr.", Toast.LENGTH_LONG).show()
-//                } catch (e: Exception) {
-//                    Log.e("Update", "Error sending patient data: ${e.message}")
-//                    Toast.makeText(this, "Bohužiaľ sa nepodalrilio odoslať všetky údaje, skúste to neskôr.", Toast.LENGTH_LONG).show()
-//                }
-//                withContext(Dispatchers.Main) {
-//                    recreate()
-//                }
-//            }
-//        }
-
-//        btnUpdate.setOnClickListener {
-//            viewModel.sendPatientData()
-//        }
-
         btnUpdate.setOnClickListener {
             lifecycleScope.launch {
                 progressBar.visibility = View.VISIBLE
-                val success = viewModel.sendPatientData()
+                val success = patientViewModel.sendPatientData()
                 progressBar.visibility = View.GONE
 
                 if (success) {
@@ -124,26 +90,6 @@ class PatientActivity : BaseActivity(){
             }
         }
 
-//        viewModel.sendResult.observe(this) { result ->
-//            result.fold(
-//                onSuccess = {
-//                    Toast.makeText(
-//                        this,
-//                        "Údaje boli úspešne odoslané.",
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                    recreate()
-//                },
-//                onFailure = {
-//                    Toast.makeText(
-//                        this,
-//                        "Bohužiaľ sa nepodarilo odoslať všetky údaje, skúste to neskôr.",
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                }
-//            )
-//        }
-
         btnDrawTest.setOnClickListener {
             val intent = Intent(this, WritingTestActivity::class.java)
             startActivity(intent)
@@ -151,22 +97,8 @@ class PatientActivity : BaseActivity(){
 
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                if (viewModel.getIsUpdated()) {
-//                    val intent = Intent(this@PatientActivity, MainActivity::class.java)
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                    startActivity(intent)
-//                    finish()
-//                } else {
-//                    Toast.makeText(
-//                        this@PatientActivity,
-//                        "Prosím uložte dáta pred odchodom.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
             override fun handleOnBackPressed() {
-                if (viewModel.getIsUpdated()) {
+                if (patientViewModel.getIsUpdated()) {
                     // Safe to leave directly
                     val intent = Intent(this@PatientActivity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -192,20 +124,78 @@ class PatientActivity : BaseActivity(){
                 }
             }
         })
+    }
 
+    private fun setupProtocolButtons() {
+        val gridLayout = findViewById<GridLayout>(R.id.gridLayoutProtocols)
+        gridLayout.removeAllViews()
 
-//        findViewById<ImageButton?>(R.id.btnBack)?.setOnClickListener {
-//            if (viewModel.isPatientSaved()) {
-//                finish()
-//            } else {
-//                Toast.makeText(
-//                    this@PatientInfoActivity,
-//                    "Please save first.",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        }
+        val patient = patientViewModel.getCurrentPatient()
+        val protocols = patient?.protocols ?: emptyList()
 
+        for (protocol in protocols) {
+            // Count total & saved tasks
+            val totalTasks = protocol.taskDataList.size
+            val savedTasks = protocol.taskDataList.count { it.status == TaskStatus.SAVED }
+
+            // Button label text with progress info
+            val label = "${protocol.protocolName.uppercase()}  $savedTasks/$totalTasks"
+
+            // Create button
+            val button = Button(this).apply {
+                text = label
+                textSize = 18f
+                isAllCaps = false
+                layoutParams = GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = resources.getDimensionPixelSize(R.dimen.protocol_button_height)
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    setMargins(8, 8, 8, 8)
+                }
+
+                // Optional color differentiation: user-created protocols = blue, predefined = gray
+//                val colorRes = if (protocol.editable) R.color.light_blue else R.color.gray
+//                setBackgroundColor(getColor(colorRes))
+
+                setOnClickListener {
+                    openProtocol(protocol)
+                }
+            }
+            gridLayout.addView(button)
+
+            if(protocolViewModel.getProtocol(protocol.protocolName)!!.editable) {
+                button.setOnLongClickListener {
+                    val fragment = DeleteProtocolFragment.newInstance(protocol.protocolName)
+                    fragment.show(supportFragmentManager, "DeleteProtocolDialog")
+                    true
+                }
+            }
+        }
+    }
+
+    private fun openProtocol(protocol: ProtocolData) {
+        patientViewModel.setCurrentProtocol(protocol)
+        val intent = Intent(this, TaskListActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onProtocolCreated(protocol: ProtocolDefinition) {
+        // Save and add to repository
+        protocolViewModel.createNewProtocol(protocol)
+        val protocolData = ProtocolData(
+            protocolName = protocol.name,
+            taskDataList = emptyList<TaskData>().toMutableList()
+        )
+
+        patientViewModel.getCurrentPatient()?.protocols?.add(protocolData)
+        setupProtocolButtons()
+    }
+
+    override fun onProtocolDeleteConfirmed(protocolName: String) {
+        protocolViewModel.deleteProtocol(protocolViewModel.getProtocol(protocolName)!!)
+        patientViewModel.getCurrentPatient()?.protocols?.removeIf { it.protocolName == protocolName }
+        setupProtocolButtons()
     }
 
 }

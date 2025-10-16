@@ -1,6 +1,7 @@
 package com.example.diagnosticapp.data.repository
 
 import android.content.Context
+import android.util.Log
 
 import com.example.diagnosticapp.data.model.ProtocolDefinition
 import com.example.diagnosticapp.data.model.TaskData
@@ -42,6 +43,10 @@ object ProtocolRepository {
         _protocols.addAll(loadUserProtocols(dir))
     }
 
+    fun addProtocol(protocol: ProtocolDefinition){
+        _protocols.add(protocol)
+    }
+
     private fun loadDefaultProtocols(context: Context): List<ProtocolDefinition> {
         return try {
             val inputStream = context.assets.open("default_protocols.json")
@@ -69,8 +74,28 @@ object ProtocolRepository {
 
     fun saveUserProtocol(protocol: ProtocolDefinition, context: Context) {
         val dir = File(context.filesDir, "protocols")
-        val file = File(dir, "${protocol.name}.json")
+        val safeFileName = "${protocol.name.replace(" ", "_")}.json"
+        val file = File(dir, safeFileName)
         file.writeText(Json.encodeToString(protocol))
         _protocols.add(protocol)
+    }
+
+    fun deleteUserProtocol(protocol: ProtocolDefinition, context: Context){
+        val dir = File(context.filesDir, "protocols")
+        val safeFileName = "${protocol.name.replace(" ", "_")}.json"
+        val file = File(dir, safeFileName)
+
+        if (file.exists()) {
+            val deleted = file.delete()
+            if (!deleted) {
+                Log.e("ProtocolRepository", "Failed to delete file: ${file.absolutePath}")
+            } else {
+                Log.d("ProtocolRepository", "Deleted protocol file: ${file.name}")
+            }
+        } else {
+            Log.w("ProtocolRepository", "File not found: ${file.absolutePath}")
+        }
+
+        _protocols.removeIf { it.name == protocol.name }
     }
 }

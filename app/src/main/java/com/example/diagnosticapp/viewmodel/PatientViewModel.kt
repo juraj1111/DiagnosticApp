@@ -10,13 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewModelScope
 import com.example.diagnosticapp.data.model.ProtocolData
-import com.example.diagnosticapp.data.model.ProtocolDefinition
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.data.repository.ProtocolRepository
 import kotlinx.coroutines.withContext
 import java.text.Normalizer
 
-class SharedPatientViewModel : ViewModel() {
+class PatientViewModel : ViewModel() {
 
     private val _currentPatient = MutableLiveData<Patient>()
     val currentPatient: LiveData<Patient> = _currentPatient
@@ -25,9 +24,8 @@ class SharedPatientViewModel : ViewModel() {
         PatientRepository.testWebDAVConnection()
     }
 
-    fun getCurrentProtocol() : ProtocolData {
-        val protocol = PatientRepository.currentProtocol
-        return requireNotNull(protocol) { "Protocol not found." }
+    fun getCurrentProtocol() : ProtocolData? {
+        return PatientRepository.currentProtocol
     }
 
     fun setCurrentProtocol(protocol: ProtocolData) {
@@ -60,7 +58,7 @@ class SharedPatientViewModel : ViewModel() {
         }
     }
 
-    fun createPatientProtocols(): List<ProtocolData> {
+    fun createPatientProtocols(): MutableList<ProtocolData> {
         return ProtocolRepository.protocols.map { definition ->
             val taskDataList = definition.tasks.map { taskDef ->
                 TaskData(
@@ -75,7 +73,7 @@ class SharedPatientViewModel : ViewModel() {
                 protocolName = definition.name,
                 taskDataList = taskDataList
             )
-        }
+        }.toMutableList()
     }
 
 
@@ -86,6 +84,15 @@ class SharedPatientViewModel : ViewModel() {
     fun createExistingPatient(id: Int, disease: String, onResult: (Boolean) -> Unit){
         viewModelScope.launch {
             val patient: Patient? = PatientRepository.fetchPatient(id, disease)
+
+            val protocols = createPatientProtocols()
+            for(protocol in protocols){
+                if(patient?.protocols?.find { it.protocolName == protocol.protocolName } == null){
+                    patient?.protocols?.add(protocol)
+                }
+            }
+
+
             PatientRepository.isUpdated = true
 
             if (patient == null) {
@@ -94,7 +101,7 @@ class SharedPatientViewModel : ViewModel() {
             }
 
             PatientRepository.currentPatient = patient
-            //_currentPatient.value = patient
+
             onResult(true)
         }
     }

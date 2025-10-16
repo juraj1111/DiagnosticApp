@@ -14,15 +14,14 @@ import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.utils.DiseaseMapping
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 
 class PatientInfoActivity : BaseActivity() {
 
-    private lateinit var viewModel: SharedPatientViewModel
+    private lateinit var viewModel: PatientViewModel
 
     private lateinit var etAge: EditText
     private lateinit var radioSexGroup: RadioGroup
@@ -82,7 +81,7 @@ class PatientInfoActivity : BaseActivity() {
     private fun saveDataAndClose() {
         val age = etAge.text.toString().toIntOrNull()
         val selectedSexId = radioSexGroup.checkedRadioButtonId
-        viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PatientViewModel::class.java)
 
         if (age != null && selectedSexId != -1 && selected_disease != null) {
             val selectedSex = findViewById<RadioButton>(selectedSexId).text.toString()

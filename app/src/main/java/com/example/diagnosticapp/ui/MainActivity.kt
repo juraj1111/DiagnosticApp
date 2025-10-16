@@ -5,13 +5,9 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
-import com.example.diagnosticapp.data.repository.PatientRepository.uploadFileToNextcloud
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 //import com.example.diagnosticapp.data.repository.PatientRepository.listFilesFromNextcloud
-import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
-import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,8 +27,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val viewModel : SharedPatientViewModel
-        viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
+        val viewModel : PatientViewModel
+        viewModel = ViewModelProvider(this).get(PatientViewModel::class.java)
 
         viewModel.testDB()
 

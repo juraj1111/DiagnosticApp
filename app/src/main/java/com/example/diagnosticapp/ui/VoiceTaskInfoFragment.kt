@@ -5,22 +5,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
-import com.example.diagnosticapp.data.model.TaskData
-import com.example.diagnosticapp.data.model.VoiceTask
-import com.example.diagnosticapp.data.repository.VoiceTasks
 import com.example.diagnosticapp.viewmodel.ProtocolViewModel
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 
 class VoiceTaskInfoFragment : Fragment() {
 
     private var taskId: String = ""
 
-    private lateinit var viewModelPatient : SharedPatientViewModel
+    private lateinit var viewModelPatient : PatientViewModel
     private lateinit var viewModelProtocol : ProtocolViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +33,11 @@ class VoiceTaskInfoFragment : Fragment() {
         val tvTitle = view.findViewById<TextView>(R.id.tv_task_name)
         val tvDescription = view.findViewById<TextView>(R.id.tv_task_description)
 
-        viewModelPatient = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
+        viewModelPatient = ViewModelProvider(this).get(PatientViewModel::class.java)
         viewModelProtocol = ViewModelProvider(this).get(ProtocolViewModel::class.java)
 
-        var protocol = viewModelProtocol.getProtocol(viewModelPatient.getCurrentProtocol().protocolName)
-        val task = protocol.tasks.find { it.id == taskId }
+        var protocol = viewModelProtocol.getProtocol(viewModelPatient.getCurrentProtocol()!!.protocolName)
+        val task = protocol?.tasks?.find { it.id == taskId }
 
         tvTitle.text = task?.let { getString(it.nameResId) }
         tvDescription.text = task?.let { getString(it.descriptionResId) }

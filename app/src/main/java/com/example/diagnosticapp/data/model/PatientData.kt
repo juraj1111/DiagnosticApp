@@ -10,7 +10,7 @@ data class Patient(
     var age: Int,
     var sex: String,
     var disease: String,
-    var protocols: List<ProtocolData>
+    var protocols: MutableList<ProtocolData>
 )
 
 @Serializable

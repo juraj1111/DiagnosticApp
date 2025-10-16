@@ -1,32 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <!-- Main scrollable content -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tvTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Tasks"
-            android:textSize="40sp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:paddingBottom="16dp" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-        <GridLayout
-            android:id="@+id/gridLayoutTasks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:useDefaultMargins="true" />
-    </LinearLayout>
-</ScrollView>
+            <EditText
+                android:id="@+id/etTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="Protokol meno"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="16dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                android:longClickable="false"
+                android:inputType="none" />
+
+            <GridLayout
+                android:id="@+id/gridLayoutTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:useDefaultMargins="true" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Floating edit button -->
+    <ImageButton
+        android:id="@+id/btnEdit"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="24dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/edit_button"
+        android:scaleType="fitCenter"/>
+</FrameLayout>

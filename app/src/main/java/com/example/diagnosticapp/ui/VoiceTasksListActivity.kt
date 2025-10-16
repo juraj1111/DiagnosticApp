@@ -4,18 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.model.TaskData
 import com.example.diagnosticapp.data.model.TaskStatus
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 
 class VoiceTasksListActivity : BaseActivity() {
 
-    private lateinit var viewModel : SharedPatientViewModel
+    private lateinit var viewModel : PatientViewModel
     private lateinit var taskButtons: Map<String, Button>
     private lateinit var taskMap: Map<String, TaskData>
 
@@ -23,7 +21,7 @@ class VoiceTasksListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voice_tasks_list)
 
-        viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PatientViewModel::class.java)
         val patient = viewModel.getCurrentPatient()
         taskMap = patient?.protocols?.get(0)?.taskDataList?.associateBy { it.id }!!
 

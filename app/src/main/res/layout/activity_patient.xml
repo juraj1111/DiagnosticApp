@@ -3,15 +3,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:padding="16dp"
+    android:gravity="center_horizontal">
 
-    <!-- Horizontal layout for TextViews -->
+    <!-- Header section -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingBottom="16dp">
-
 
         <TextView
             android:id="@+id/tvTitle"
@@ -30,71 +30,75 @@
             android:textSize="34sp"
             android:textStyle="bold"
             android:padding="5dp" />
-
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvInfo"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Placeholder"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp" />
+
+    <!-- Scrollable protocols grid -->
+    <ScrollView
+        android:layout_width="800dp"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <GridLayout
+            android:id="@+id/gridLayoutProtocols"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:useDefaultMargins="true"
+            android:alignmentMode="alignMargins"
+            android:gravity="center" />
+    </ScrollView>
+
+    <!-- Button for creating new protocol -->
+    <Button
+        android:id="@+id/btnNewProtocol"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:text="Nový protokol"
+        android:textSize="28sp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Horizontal layout for bottom buttons -->
+    <LinearLayout
+        android:layout_width="800dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="-30dp"
-        android:layout_marginBottom="-20dp"
-        android:paddingBottom="16dp">
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
-        <TextView
-            android:id="@+id/tvInfo"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btnDrawTest"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Placeholder"
-            android:textSize="34sp"
-            android:textStyle="bold"
-            android:padding="5dp" />
+            android:layout_weight="1"
+            android:text="Vyskúšať písanie"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnUpdateData"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Odoslať dáta"
+            android:textSize="24sp"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnWritingProtocol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="380dp"
-        android:height="100dp"
-        android:text="Písací protokol"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btnVoiceProtocol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="380dp"
-        android:height="100dp"
-        android:text="Hlasový protokol"
-        android:textSize="30sp" />
-
-
-    <Button
-        android:id="@+id/btnUpdateData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="380dp"
-        android:height="70dp"
-        android:text="Odoslať dáta"
-        android:layout_marginTop="30dp"
-        android:textSize="30sp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminate="true"
         android:visibility="gone"
-        android:layout_gravity="center"/>
-
-    <Button
-        android:id="@+id/btnDrawTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="380dp"
-        android:height="70dp"
-        android:text="Vyskúšať písanie"
-        android:textSize="30sp" />
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>

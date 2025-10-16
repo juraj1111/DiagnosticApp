@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_dialog_bg">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vytvor nový protokol"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <EditText
+        android:id="@+id/etProtocolName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Názov protokolu"
+        android:inputType="textPersonName" />
+
+    <RadioGroup
+        android:id="@+id/rgProtocolType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="12dp">
+
+        <RadioButton
+            android:id="@+id/rbVoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hlas" />
+
+        <RadioButton
+            android:id="@+id/rbWriting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Písanie" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingTop="16dp">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/btnCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+</LinearLayout>

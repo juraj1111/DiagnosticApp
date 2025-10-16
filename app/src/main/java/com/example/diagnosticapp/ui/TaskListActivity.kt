@@ -3,19 +3,28 @@ package com.example.diagnosticapp.ui
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.GridLayout
-import android.widget.TextView
+import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
+import com.example.diagnosticapp.data.model.ProtocolData
 import com.example.diagnosticapp.data.model.TaskStatus
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.ProtocolViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 
 class TaskListActivity : BaseActivity() {
 
-    private lateinit var viewModel: SharedPatientViewModel
+    private lateinit var patientViewModel: PatientViewModel
+    private lateinit var protocolViewModel : ProtocolViewModel
     private lateinit var gridLayout: GridLayout
-    private lateinit var titleView: TextView
+    private lateinit var title: EditText
+    private lateinit var editButton: ImageButton
+
+    private var protocolData: ProtocolData? = null
+
+    private var isEdited = false
 
     //private var protocolIndex: Int = 0 // index of protocol in patient's list
 
@@ -23,12 +32,31 @@ class TaskListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tasks_list)
 
-        viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
+        patientViewModel = ViewModelProvider(this).get(PatientViewModel::class.java)
+        protocolViewModel = ViewModelProvider(this).get(ProtocolViewModel::class.java)
 
         gridLayout = findViewById(R.id.gridLayoutTasks)
-        titleView = findViewById(R.id.tvTitle)
+        title = findViewById(R.id.etTitle)
+        editButton = findViewById(R.id.btnEdit)
 
-        //protocolIndex = intent.getIntExtra("PROTOCOL_INDEX", 0)
+        val patient = patientViewModel.getCurrentPatient() ?: return
+        protocolData = patientViewModel.getCurrentProtocol()
+
+        if(!protocolViewModel.getProtocol(protocolData!!.protocolName)?.editable!!){
+            editButton.visibility = ImageButton.GONE
+        }else{
+            editButton.setOnClickListener{
+                if(isEdited){
+                    isEdited = false
+                    editButton.setImageResource(R.drawable.edit_button)
+                    setEditable(title, false)
+                }else{
+                    isEdited = true
+                    editButton.setImageResource(R.drawable.edit_off_button)
+                    setEditable(title, true)
+                }
+            }
+        }
 
         setupTasks()
     }
@@ -39,19 +67,26 @@ class TaskListActivity : BaseActivity() {
     }
 
     private fun setupTasks() {
-        val patient = viewModel.getCurrentPatient() ?: return
-        //val protocol = patient.protocols.getOrNull(protocolIndex) ?: return
-        val protocol = viewModel.getCurrentProtocol() ?: return
-
-        titleView.text = protocol.protocolName
-
         gridLayout.removeAllViews()
 
+        if(protocolData != null) {
+            if (!protocolViewModel.getProtocol(protocolData!!.protocolName)?.editable!!) {
+                title.setText(protocolData!!.protocolName)
+                addTaskButtons()
+                updateButtonColors()
+            }
+        }else{
+            setEditable(title, true)
+            addPlusButton()
+        }
+
+    }
+
+    private fun addTaskButtons(){
         val dp = resources.displayMetrics.density
         val margin = (8 * dp).toInt()
 
-        // Dynamically create buttons for each task
-        for (taskData in protocol.taskDataList) {
+        for (taskData in protocolData?.taskDataList!!) {
             val button = Button(this).apply {
                 text = "Úloha ${taskData.id.removePrefix("task")}"
                 textSize = 18f
@@ -69,14 +104,35 @@ class TaskListActivity : BaseActivity() {
             }
             gridLayout.addView(button)
         }
+    }
 
-        updateButtonColors()
+    private fun addPlusButton(){
+        val dp = resources.displayMetrics.density
+        val margin = (8 * dp).toInt()
+
+        val plusButton = Button(this).apply {
+            text = "Pridať úlohu"
+            textSize = 18f
+            setPadding(8, 8, 8, 8)
+
+            val params = GridLayout.LayoutParams().apply {
+                width = 0
+                height = GridLayout.LayoutParams.WRAP_CONTENT
+                columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                setMargins(margin, margin, margin, margin)
+            }
+
+            layoutParams = params
+            setBackgroundColor(getColor(R.color.gray))
+//            setOnClickListener { startTaskActivity(taskData.id, taskData.type) }
+        }
+        gridLayout.addView(plusButton)
     }
 
     private fun updateButtonColors() {
-        val patient = viewModel.getCurrentPatient() ?: return
+        val patient = patientViewModel.getCurrentPatient() ?: return
         //val protocol = patient.protocols.getOrNull(protocolIndex) ?: return
-        val protocol = viewModel.getCurrentProtocol() ?: return
+        val protocol = patientViewModel.getCurrentProtocol() ?: return
 
         for (i in 0 until gridLayout.childCount) {
             val button = gridLayout.getChildAt(i) as Button
@@ -112,6 +168,14 @@ class TaskListActivity : BaseActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
+    }
+
+    fun setEditable(editText: EditText, editable: Boolean) {
+        editText.isFocusable = editable
+        editText.isFocusableInTouchMode = editable
+        editText.isCursorVisible = editable
+        editText.isLongClickable = editable
+        editText.isEnabled = editable
     }
 }
 

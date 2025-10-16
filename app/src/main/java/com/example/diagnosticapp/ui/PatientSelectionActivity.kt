@@ -9,10 +9,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -20,7 +19,7 @@ import com.example.diagnosticapp.utils.DiseaseMapping
 
 class PatientSelectionActivity : BaseActivity() {
 
-    private lateinit var viewModel: SharedPatientViewModel
+    private lateinit var viewModel: PatientViewModel
 
     private lateinit var etId: EditText
     private lateinit var btnFindPatient: Button
@@ -39,7 +38,7 @@ class PatientSelectionActivity : BaseActivity() {
         btnFindPatient = findViewById(R.id.btn_find_patient)
         spinner= findViewById(R.id.spinner_options)
 
-        viewModel = ViewModelProvider(this).get(SharedPatientViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PatientViewModel::class.java)
 
         btnFindPatient.setOnClickListener{
             val id = etId.text.toString().toIntOrNull()
@@ -98,7 +97,7 @@ class PatientSelectionActivity : BaseActivity() {
         spinner.adapter = adapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val slovakName = diseaseLabels[position]
                 selected_disease = DiseaseMapping.getEnglishKey(slovakName)  // always English key
             }

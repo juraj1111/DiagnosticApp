@@ -6,18 +6,16 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.example.diagnosticapp.R
-import com.example.diagnosticapp.data.repository.WritingTasks
 import com.example.diagnosticapp.viewmodel.ProtocolViewModel
-import com.example.diagnosticapp.viewmodel.SharedPatientViewModel
+import com.example.diagnosticapp.viewmodel.PatientViewModel
 
 class WritingTaskActivity : BaseActivity() {
 
     private lateinit var taskId: String
 
     private val viewModelProtocol: ProtocolViewModel by viewModels()
-    private val viewModelPatient: SharedPatientViewModel by viewModels()
+    private val viewModelPatient: PatientViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +45,8 @@ class WritingTaskActivity : BaseActivity() {
         val tvTaskName = findViewById<TextView>(R.id.tv_task_name)
         val tvTextDescription = findViewById<TextView>(R.id.tv_task_description)
 
-        var protocol = viewModelProtocol.getProtocol(viewModelPatient.getCurrentProtocol().protocolName)
-        val task = protocol.tasks.find { it.id == taskId }
+        var protocol = viewModelProtocol.getProtocol(viewModelPatient.getCurrentProtocol()!!.protocolName)
+        val task = protocol?.tasks?.find { it.id == taskId }
 
         tvTaskName.text = task?.let { getString(it.nameResId) }
         tvTextDescription.text = task?.let { getString(it.descriptionResId) }
