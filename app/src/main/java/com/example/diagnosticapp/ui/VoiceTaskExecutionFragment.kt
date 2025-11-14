@@ -21,14 +21,10 @@ enum class ExecutionState {
     PLAYING,
 }
 
-
-
-
 class VoiceTaskExecutionFragment : Fragment() {
 
     private var taskId: String? = null
-
-    private var executionState:ExecutionState = ExecutionState.START
+    private var executionState: ExecutionState = ExecutionState.START
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,24 +56,46 @@ class VoiceTaskExecutionFragment : Fragment() {
             }
         }
 
+        // Initial state: button enabled
+        btnPlay.isEnabled = true
+        btnPlay.imageAlpha = 255
+
+        // Only handle the transition from RECORDING (stopped) → RECORDED
+        viewModel.isFileReady.observe(viewLifecycleOwner) { ready ->
+            if (ready && executionState == ExecutionState.RECORDING) {
+                // File is now ready after stopping recording
+                executionState = ExecutionState.RECORDED
+                btnPlay.setImageResource(R.drawable.play_circle)
+                btnPlay.isEnabled = true
+                btnPlay.imageAlpha = 255
+            }
+        }
+
         btnPlay.setOnClickListener {
-            if(executionState === ExecutionState.START){
-                executionState = ExecutionState.RECORDING
-                btnPlay.setImageResource(R.drawable.stop_circle)
-                viewModel.startRecording()
-            }else if(executionState === ExecutionState.RECORDING){
-                executionState = ExecutionState.RECORDED
-                btnPlay.setImageResource(R.drawable.play_circle)
-                viewModel.stopRecording()
-            }else if(executionState === ExecutionState.RECORDED){
-                executionState = ExecutionState.PLAYING
-                btnPlay.setImageResource(R.drawable.stop_circle)
-                btnSave.setImageResource(R.drawable.tick_green)
-                viewModel.startPlayback()
-            }else if(executionState === ExecutionState.PLAYING){
-                executionState = ExecutionState.RECORDED
-                btnPlay.setImageResource(R.drawable.play_circle)
-                viewModel.stopPlayback()
+            when (executionState) {
+                ExecutionState.START -> {
+                    executionState = ExecutionState.RECORDING
+                    btnPlay.setImageResource(R.drawable.stop_circle)
+                    viewModel.startRecording()
+                }
+                ExecutionState.RECORDING -> {
+                    // Disable button briefly while WAV file is being finalized
+                    btnPlay.isEnabled = false
+                    btnPlay.imageAlpha = 128
+                    viewModel.stopRecording()
+                    // Button re-enabled by isFileReady observer
+                }
+                ExecutionState.RECORDED -> {
+                    executionState = ExecutionState.PLAYING
+                    btnPlay.setImageResource(R.drawable.stop_circle)
+                    btnSave.setImageResource(R.drawable.tick_green)
+                    viewModel.startPlayback()
+                }
+                ExecutionState.PLAYING -> {
+                    executionState = ExecutionState.RECORDED
+                    btnPlay.setImageResource(R.drawable.play_circle)
+                    viewModel.stopPlayback()
+                }
             }
         }
 
@@ -87,10 +105,11 @@ class VoiceTaskExecutionFragment : Fragment() {
                     viewModel.resetRecording()
                 }
                 ExecutionState.RECORDED -> {
-                    viewModel.resetRecording() // in case we want fresh start
+                    viewModel.resetRecording()
                 }
                 ExecutionState.PLAYING -> {
                     viewModel.resetPlayback()
+                    viewModel.resetRecording() // Also clean up recording
                 }
                 else -> {}
             }
@@ -98,11 +117,12 @@ class VoiceTaskExecutionFragment : Fragment() {
             // Reset overall execution flow
             executionState = ExecutionState.START
             btnPlay.setImageResource(R.drawable.mic_circle)
+            btnPlay.isEnabled = true
+            btnPlay.imageAlpha = 255
             btnSave.setImageResource(R.drawable.tick)
-            btnPause.setImageResource(R.drawable.pause) // back to pause icon
+            btnPause.setImageResource(R.drawable.pause)
             tvTime.text = "00:00"
         }
-
 
         btnPause.setOnClickListener {
             when (executionState) {
@@ -137,10 +157,10 @@ class VoiceTaskExecutionFragment : Fragment() {
         }
 
         btnSave.setOnClickListener {
-            if(executionState === ExecutionState.RECORDED || executionState === ExecutionState.PLAYING){
-                if(executionState === ExecutionState.PLAYING) viewModel.stopPlayback()
+            if (executionState == ExecutionState.RECORDED || executionState == ExecutionState.PLAYING) {
+                if (executionState == ExecutionState.PLAYING) viewModel.stopPlayback()
                 viewModel.saveRecording(taskId)
-                val intent = Intent(requireContext(), VoiceTasksListActivity::class.java)
+                val intent = Intent(requireContext(), TaskListActivity::class.java)
                 startActivity(intent)
             }
         }

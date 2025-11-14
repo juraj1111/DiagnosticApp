@@ -131,15 +131,16 @@ class PatientActivity : BaseActivity(), CreateProtocolDialogFragment.OnProtocolC
         gridLayout.removeAllViews()
 
         val patient = patientViewModel.getCurrentPatient()
-        val protocols = patient?.protocols ?: emptyList()
+        val protocols = protocolViewModel.getAllProtocols()
 
         for (protocol in protocols) {
             // Count total & saved tasks
-            val totalTasks = protocol.taskDataList.size
-            val savedTasks = protocol.taskDataList.count { it.status == TaskStatus.SAVED }
+            val totalTasks = protocol.tasks.size
+            val patientProtocol = patient!!.protocols.find { it.protocolName == protocol.name }
+            val savedTasks =  patientProtocol!!.taskDataList.count { it.status == TaskStatus.SAVED }
 
             // Button label text with progress info
-            val label = "${protocol.protocolName.uppercase()}  $savedTasks/$totalTasks"
+            val label = "${protocol.name.uppercase()}  $savedTasks/$totalTasks"
 
             // Create button
             val button = Button(this).apply {
@@ -159,14 +160,14 @@ class PatientActivity : BaseActivity(), CreateProtocolDialogFragment.OnProtocolC
 //                setBackgroundColor(getColor(colorRes))
 
                 setOnClickListener {
-                    openProtocol(protocol)
+                    openProtocol(patientProtocol)
                 }
             }
             gridLayout.addView(button)
 
-            if(protocolViewModel.getProtocol(protocol.protocolName)!!.editable) {
+            if(protocol.editable) {
                 button.setOnLongClickListener {
-                    val fragment = DeleteProtocolFragment.newInstance(protocol.protocolName)
+                    val fragment = DeleteProtocolFragment.newInstance(protocol.name)
                     fragment.show(supportFragmentManager, "DeleteProtocolDialog")
                     true
                 }

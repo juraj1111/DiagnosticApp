@@ -41,15 +41,23 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
     private val _playbackTime = MutableLiveData(0)
     val playbackTime: LiveData<Int> get() = _playbackTime
 
+    private val _isFileReady = MutableLiveData<Boolean>()
+    val isFileReady: LiveData<Boolean> get() = _isFileReady
+
     // Audio parameters
     private val sampleRate = 44100
     private val channelConfig = AudioFormat.CHANNEL_IN_MONO
     private val audioFormat = AudioFormat.ENCODING_PCM_16BIT
     private var totalBytesWritten = 0
 
+    init {
+        _isFileReady.value = false
+    }
+
     // ---------------- RECORDING ----------------
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     fun startRecording() {
+        _isFileReady.value = false
         val fileName = "voice_task_${System.currentTimeMillis()}.wav"
         val context = getApplication<Application>().applicationContext
         val file = File(context.filesDir, fileName)
@@ -103,6 +111,7 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
 
         // Update header with real data size
         updateWavHeader(file, totalBytesWritten, sampleRate, channelConfig, audioFormat)
+        _isFileReady.postValue(true)
     }
 
     fun pauseRecording() {
@@ -122,29 +131,38 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun stopRecording() {
+        if (!isRecording) return
+
         isRecording = false
         isPaused = false
-        audioRecord?.stop()
+
+        try {
+            audioRecord?.stop()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         audioRecord?.release()
         audioRecord = null
-        recordingThread = null
 
-        _recordingState.value = RecordingState.STOPPED
+        recordingThread?.join()
+
+        _recordingState.postValue(RecordingState.STOPPED)
         stopTimer()
     }
+
 
     fun resetRecording() {
         stopRecording()
         outputFilePath?.let { path ->
             val file = File(path)
-            if (file.exists()) {
-                file.delete() // delete the incomplete/old recording
-            }
+            if (file.exists()) file.delete()
         }
         outputFilePath = null
         totalBytesWritten = 0
         _recordingState.value = RecordingState.IDLE
         _recordingTime.value = 0
+        _isFileReady.value = false
     }
 
     // ---------------- PLAYBACK ----------------
@@ -260,7 +278,7 @@ class VoiceTaskViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun saveRecording(taskId: String?) {
         if (!outputFilePath.isNullOrEmpty() && taskId != null) {
-            PatientRepository.updateVoiceTask(taskId, outputFilePath)
+            PatientRepository.updateTask(taskId, outputFilePath)
         }
     }
 

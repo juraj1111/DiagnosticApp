@@ -8,6 +8,7 @@ import com.example.diagnosticapp.data.model.Patient
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.BuildConfig
 import com.example.diagnosticapp.data.model.ProtocolData
+import com.example.diagnosticapp.data.model.ProtocolDefinition
 import com.example.diagnosticapp.data.model.TaskData
 
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
@@ -64,54 +65,34 @@ object PatientRepository {
 
 
 
-    fun updateVoiceTask(taskId: String, filePath: String?) {
+    fun updateTask(taskId: String, filePath: String?) {
         val task = currentProtocol?.taskDataList?.find { it.id == taskId }
-        if (task != null) {
-            task.resultFilePath = filePath
-            task.status = TaskStatus.COMPLETED
-            isUpdated = false
-            Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
+        if (task == null) {
+            Log.e("PatientRepository", "Task $taskId not found.")
+            return
+        }
 
-            CoroutineScope(Dispatchers.IO).launch {
-                val idFormatted = String.format("%04d", currentPatient!!.id)
-                val remotePath = "${currentPatient!!.disease}/$idFormatted/voice/"
-                if (uploadFileToNextcloud(remotePath, task)) {
-                    updatePatient(currentPatient!!)
-                    isUpdated = true
-                    Log.d("PatientRepository", "Auto-sync success for task $taskId")
-                } else {
-                    Log.e("PatientRepository", "Auto-sync failed for task $taskId")
-                }
+        task.resultFilePath = filePath
+        task.status = TaskStatus.COMPLETED
+        isUpdated = false
+        Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val patient = currentPatient ?: return@launch
+            val idFormatted = String.format("%04d", patient.id)
+            val protocolName = currentProtocol?.protocolName ?: "UnknownProtocol"
+            val remotePath = "${patient.disease}/$idFormatted/$protocolName/"
+
+            if (uploadFileToNextcloud(remotePath, task)) {
+                updatePatient(patient)
+                isUpdated = true
+                Log.d("PatientRepository", "Auto-sync success for task $taskId")
+            } else {
+                Log.e("PatientRepository", "Auto-sync failed for task $taskId")
             }
-        } else {
-            Log.e("PatientRepository", "Voice task $taskId not found.")
         }
     }
 
-    fun updateWritingTask(taskId: String, filePath: String?) {
-        val task = currentProtocol?.taskDataList?.find { it.id == taskId }
-        if (task != null) {
-            task.resultFilePath = filePath
-            task.status = TaskStatus.COMPLETED
-            isUpdated = false
-            Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
-
-            CoroutineScope(Dispatchers.IO).launch {
-                val idFormatted = String.format("%04d", currentPatient!!.id)
-                val remotePath = "${currentPatient!!.disease}/$idFormatted/writing/"
-                if (uploadFileToNextcloud(remotePath, task)) {
-                    updatePatient(currentPatient!!)
-                    isUpdated = true
-                    Log.d("PatientRepository", "Auto-sync success for task $taskId")
-                } else {
-                    Log.e("PatientRepository", "Auto-sync failed for task $taskId")
-                }
-            }
-
-        } else {
-            Log.e("PatientRepository", "Voice task $taskId not found.")
-        }
-    }
 
 
     fun uploadFileToNextcloud(remotePath: String, task: TaskData): Boolean {
@@ -239,4 +220,34 @@ object PatientRepository {
             null
         }
     }
+
+    fun syncCurrentPatientWithProtocol(updatedProtocol: ProtocolDefinition) {
+        val patient = currentPatient ?: return
+        val protocolData = patient.protocols.find { it.protocolName == updatedProtocol.name } ?: return
+
+        val updatedTaskDataList = mutableListOf<TaskData>()
+
+        // For each task definition in the protocol
+        for (taskDef in updatedProtocol.tasks) {
+            val existing = protocolData.taskDataList.find { it.id == taskDef.id }
+            if (existing != null) {
+                updatedTaskDataList.add(existing) // keep old progress
+            } else {
+                // new task added
+                updatedTaskDataList.add(
+                    TaskData(
+                        id = taskDef.id,
+                        status = TaskStatus.UNCOMPLETED,
+                        resultFilePath = null,
+                        type = taskDef.type
+                    )
+                )
+            }
+        }
+
+        // Remove any old tasks no longer present
+        protocolData.taskDataList = updatedTaskDataList
+    }
+
+
 }

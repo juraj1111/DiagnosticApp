@@ -16,10 +16,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            name = "TarsosDSP"
+            url = uri("https://mvn.0110.be/releases")
+        }
         maven { url = uri("https://jitpack.io") }
     }
 }
 
 rootProject.name = "DiagnosticApp"
 include(":app")
- 
+include(":feature_extractor_jvm")

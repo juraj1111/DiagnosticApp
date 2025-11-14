@@ -39,8 +39,8 @@ class VoiceTaskInfoFragment : Fragment() {
         var protocol = viewModelProtocol.getProtocol(viewModelPatient.getCurrentProtocol()!!.protocolName)
         val task = protocol?.tasks?.find { it.id == taskId }
 
-        tvTitle.text = task?.let { getString(it.nameResId) }
-        tvDescription.text = task?.let { getString(it.descriptionResId) }
+        tvTitle.text = task?.name
+        tvDescription.text = task?.description
         Log.d("VoiceTaskInfoFragment", "Loading title and description for $taskId")
 
         return view

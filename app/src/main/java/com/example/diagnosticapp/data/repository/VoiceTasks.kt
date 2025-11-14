@@ -1,93 +1,89 @@
 package com.example.diagnosticapp.data.repository
 
-import com.example.diagnosticapp.data.model.VoiceTask
-import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.model.TaskDefinition
 
 object VoiceTasks {
-    private val tasks = listOf(
+
+    private val tasks = mutableListOf(
         TaskDefinition(
             id = "task1",
-            nameResId = R.string.task_1_name,
-            descriptionResId = R.string.task_1_description,
+            name = "Dlhá samohláska A",
+            description = "Dlhá samohláska A, cca 10 sekúnd na normálnej úrovni.",
             type = 1,
-            order = 1,
+            order = 1
         ),
         TaskDefinition(
             id = "task2",
-            nameResId = R.string.task_2_name,
-            descriptionResId = R.string.task_2_description,
+            name = "Dlhá samohláska A",
+            description = "Dlhá samohláska A, cca 10 sekúnd na hlasitej úrovni.",
             type = 1,
-            order = 2,
+            order = 2
         ),
         TaskDefinition(
             id = "task3",
-            nameResId = R.string.task_3_name,
-            descriptionResId = R.string.task_3_description,
+            name = "Dlhá samohláska E",
+            description = "Dlhá samohláska E, cca 10 sekúnd na normálnej úrovni.",
             type = 1,
-            order = 3,
+            order = 3
         ),
         TaskDefinition(
             id = "task4",
-            nameResId = R.string.task_4_name,
-            descriptionResId = R.string.task_4_description,
+            name = "Dlhá samohláska E",
+            description = "Dlhá samohláska E, cca 10 sekúnd na hlasitej úrovni.",
             type = 1,
-            order = 4,
+            order = 4
         ),
         TaskDefinition(
             id = "task5",
-            nameResId = R.string.task_5_name,
-            descriptionResId = R.string.task_5_description,
+            name = "Opakovať PA-TA-KA",
+            description = "Opakovať PA-TA-KA prirodzenou rýchlosťou (5x – 8x).",
             type = 1,
-            order = 5,
+            order = 5
         ),
         TaskDefinition(
             id = "task6",
-            nameResId = R.string.task_6_name,
-            descriptionResId = R.string.task_6_description,
+            name = "Rýchlo opakovať PA-TA-KA",
+            description = "Opakovať PA-TA-KA najrýchlejšou možnou rýchlosťou (5x – 8x).",
             type = 1,
-            order = 6,
+            order = 6
         ),
         TaskDefinition(
             id = "task7",
-            nameResId = R.string.task_7_name,
-            descriptionResId = R.string.task_7_description,
+            name = "Opakovať PA-PA-PA",
+            description = "Opakovať PA-PA-PA prirodzenou rýchlosťou (5x – 8x).",
             type = 1,
-            order = 7,
+            order = 7
         ),
         TaskDefinition(
             id = "task8",
-            nameResId = R.string.task_8_name,
-            descriptionResId = R.string.task_8_description,
+            name = "Rýchlo opakovať PA-PA-PA",
+            description = "Opakovať PA-PA-PA najrýchlejšou možnou rýchlosťou (5x – 8x).",
             type = 1,
-            order = 8,
+            order = 8
         ),
         TaskDefinition(
             id = "task9",
-            nameResId = R.string.task_9_name,
-            descriptionResId = R.string.task_9_description,
+            name = "Čítanie viet",
+            description = "Čítať doleuvedené vety. Slovo podčiarknuté a zvýraznené veľkými písmenami zdôrazniť.\n\nDnes sme to už nestihli, ale možno ZAJTRA navštívime všetkých známych.\nAj keď sme spolu telefonovali možno zajtra NAVŠTÍVIME všetkých známych.\nPríbuzných sme už navštívili, možno zajtra navštívime všetkých ZNÁMYCH.",
             type = 1,
-            order = 9,
+            order = 9
         ),
         TaskDefinition(
             id = "task10",
-            nameResId = R.string.task_10_name,
-            descriptionResId = R.string.task_10_description,
+            name = "Čítanie textu",
+            description = "Ešte aj koncom 19. storočia domáci aj pocestní prechádzali cez radové typy dedín, aj cez rozptýlené osídlenie...",
             type = 1,
-            order = 10,
+            order = 10
         ),
         TaskDefinition(
             id = "task11",
-            nameResId = R.string.task_11_name,
-            descriptionResId = R.string.task_11_description,
+            name = "Voľná reč",
+            description = "Porozprávať niečo o koníčkoch, čomu sa venuje vo voľnom čase, kde pracoval/pracuje.",
             type = 1,
-            order = 11,
+            order = 11
         )
     )
 
-    fun getTaskById(id: String): TaskDefinition? {
-        return tasks.find { it.id == id }
-    }
-
-    fun getAllTasks(): List<TaskDefinition> = tasks.toList()
+    fun getAllTasks(): MutableList<TaskDefinition> = tasks
+    fun getTaskById(id: String): TaskDefinition? = tasks.find { it.id == id }
 }

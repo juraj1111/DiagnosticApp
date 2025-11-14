@@ -11,6 +11,7 @@ composeBom = "2024.09.00"
 appcompat = "1.7.0"
 runtimeSavedInstanceState = "1.0.0-alpha11"
 thegrizzlylabsSardineAndroid = "0.7"
+jetbrainsKotlinJvm = "2.0.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,4 +36,5 @@ sardine-android = { module = "com.thegrizzlylabs:sardine-android", version.ref =
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 

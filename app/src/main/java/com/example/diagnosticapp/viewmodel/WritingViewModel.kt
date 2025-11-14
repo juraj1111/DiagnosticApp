@@ -83,7 +83,7 @@ class WritingViewModel(context: Context, attrs: AttributeSet) : View(context, at
 
             if (!outputFilePath.isNullOrEmpty()) {
                 Log.e("DrawingView", "Saving .svc file to repository")
-                PatientRepository.updateWritingTask(taskId, outputFilePath!!)
+                PatientRepository.updateTask(taskId, outputFilePath!!)
             } else {
                 Log.e("DrawingView", "Failed to generate outputFilePath")
             }

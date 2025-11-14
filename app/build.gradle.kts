@@ -71,6 +71,9 @@ android {
 }
 
 dependencies {
+    implementation("be.tarsos.dsp:core:2.5")
+    implementation("be.tarsos.dsp:jvm:2.5")
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.18.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.github.thegrizzlylabs:sardine-android:0.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")

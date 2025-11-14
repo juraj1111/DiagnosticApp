@@ -44,6 +44,7 @@ object ProtocolRepository {
     }
 
     fun addProtocol(protocol: ProtocolDefinition){
+        _protocols.removeIf { it.name == protocol.name }
         _protocols.add(protocol)
     }
 
@@ -74,11 +75,24 @@ object ProtocolRepository {
 
     fun saveUserProtocol(protocol: ProtocolDefinition, context: Context) {
         val dir = File(context.filesDir, "protocols")
+        if (!dir.exists()) dir.mkdirs()
+
         val safeFileName = "${protocol.name.replace(" ", "_")}.json"
         val file = File(dir, safeFileName)
+
         file.writeText(Json.encodeToString(protocol))
+
+        _protocols.removeIf { it.name == protocol.name }
         _protocols.add(protocol)
+
+        // keep current patient in sync
+        try {
+            PatientRepository.syncCurrentPatientWithProtocol(protocol)
+        } catch (e: Exception) {
+            Log.e("ProtocolRepository", "Failed to sync patient: ${e.message}")
+        }
     }
+
 
     fun deleteUserProtocol(protocol: ProtocolDefinition, context: Context){
         val dir = File(context.filesDir, "protocols")
@@ -98,4 +112,39 @@ object ProtocolRepository {
 
         _protocols.removeIf { it.name == protocol.name }
     }
+
+    fun removeTaskFromProtocol(protocolName: String, taskId: String, context: Context) {
+        val protocol = _protocols.find { it.name == protocolName } ?: return
+        val removed = protocol.tasks.removeIf { it.id == taskId }
+        if (removed) {
+            saveUserProtocol(protocol, context)
+            Log.d("ProtocolRepository", "Removed task $taskId from protocol $protocolName")
+        } else {
+            Log.w("ProtocolRepository", "Task $taskId not found in protocol $protocolName")
+        }
+    }
+
+    fun renameProtocol(oldName: String, newName: String, context: Context): Boolean {
+        val oldSafe = "${oldName.replace(" ", "_")}.json"
+        val newSafe = "${newName.replace(" ", "_")}.json"
+
+        val dir = File(context.filesDir, "protocols")
+        val oldFile = File(dir, oldSafe)
+        val newFile = File(dir, newSafe)
+
+        val protocol = _protocols.find { it.name == oldName } ?: return false
+        protocol.name = newName
+
+        if (oldFile.exists()) oldFile.renameTo(newFile)
+
+        _protocols.removeIf { it.name == oldName }
+        _protocols.add(protocol)
+
+        // Update in current patient if needed
+        val patient = PatientRepository.currentPatient
+        patient?.protocols?.find { it.protocolName == oldName }?.protocolName = newName
+
+        return true
+    }
+
 }

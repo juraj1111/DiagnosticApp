@@ -48,8 +48,8 @@ class WritingTaskActivity : BaseActivity() {
         var protocol = viewModelProtocol.getProtocol(viewModelPatient.getCurrentProtocol()!!.protocolName)
         val task = protocol?.tasks?.find { it.id == taskId }
 
-        tvTaskName.text = task?.let { getString(it.nameResId) }
-        tvTextDescription.text = task?.let { getString(it.descriptionResId) }
+        tvTaskName.text = task?.name
+        tvTextDescription.text = task?.description
         Log.d("WritingTaskInfoFragment", "Loading title and description for $taskId")
     }
 
