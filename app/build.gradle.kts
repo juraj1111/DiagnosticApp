@@ -71,6 +71,7 @@ android {
 }
 
 dependencies {
+    implementation("org.tensorflow:tensorflow-lite:2.12.0")
     implementation("be.tarsos.dsp:core:2.5")
     implementation("be.tarsos.dsp:jvm:2.5")
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.18.0")

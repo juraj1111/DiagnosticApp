@@ -74,14 +74,14 @@ object VoiceTasks {
             description = "Ešte aj koncom 19. storočia domáci aj pocestní prechádzali cez radové typy dedín, aj cez rozptýlené osídlenie...",
             type = 1,
             order = 10
-        ),
-        TaskDefinition(
-            id = "task11",
-            name = "Voľná reč",
-            description = "Porozprávať niečo o koníčkoch, čomu sa venuje vo voľnom čase, kde pracoval/pracuje.",
-            type = 1,
-            order = 11
         )
+//        TaskDefinition(
+//            id = "task11",
+//            name = "Voľná reč",
+//            description = "Porozprávať niečo o koníčkoch, čomu sa venuje vo voľnom čase, kde pracoval/pracuje.",
+//            type = 1,
+//            order = 11
+//        )
     )
 
     fun getAllTasks(): MutableList<TaskDefinition> = tasks

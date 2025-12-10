@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.example.diagnosticapp.data.repository.PatientRepository
 import java.io.File
-class WritingViewModel(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class WritingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val path = Path()
     private val paint = Paint().apply {
@@ -41,7 +41,7 @@ class WritingViewModel(context: Context, attrs: AttributeSet) : View(context, at
         }
 
         // Save data
-        points.add("$x,$y,$timestamp,$isTouching,$pressure,$azimuth,$altitude")
+        points.add("$x $y $timestamp $isTouching $pressure $azimuth $altitude")
 
         return true
     }

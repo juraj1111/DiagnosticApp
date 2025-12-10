@@ -8,9 +8,8 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.sqrt
-import kotlin.math.abs
 
-fun extractFeaturesFromWav(path: String): FloatArray {
+fun VoiceFeatureExtractorV1(path: String): FloatArray {
     val file = File(path)
     if (!file.exists()) return FloatArray(16) { 0f }
 

@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.repository.WritingTasks
-import com.example.diagnosticapp.viewmodel.WritingViewModel
+import com.example.diagnosticapp.viewmodel.WritingView
 
 class WritingTaskExecutionActivity : BaseActivity() {
 
@@ -26,7 +26,7 @@ class WritingTaskExecutionActivity : BaseActivity() {
         }
 
 
-        val writingViewModel = findViewById<WritingViewModel>(R.id.drawingView)
+        val writingViewModel = findViewById<WritingView>(R.id.drawingView)
         val btnErase = findViewById<Button>(R.id.btnErase)
         val btnSave = findViewById<Button>(R.id.btnSave)
 

@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.collection.emptyLongSet
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.diagnosticapp.data.model.Patient
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.BuildConfig
@@ -30,6 +32,9 @@ object PatientRepository {
 
     var currentPatient: Patient? = null
     var currentProtocol: ProtocolData? = null
+
+    private val _patientLive = MutableLiveData<Patient?>()
+    val patientLive: LiveData<Patient?> = _patientLive
 
     var isUpdated: Boolean = true
 
@@ -74,7 +79,9 @@ object PatientRepository {
 
         task.resultFilePath = filePath
         task.status = TaskStatus.COMPLETED
+        _patientLive.postValue(currentPatient)
         isUpdated = false
+
         Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -132,6 +139,7 @@ object PatientRepository {
             Log.i("PatientRepository", "Successfully uploaded: $fullPath")
 
             task.status = TaskStatus.SAVED
+            _patientLive.postValue(currentPatient)
             true
 
         } catch (e: SardineException) {

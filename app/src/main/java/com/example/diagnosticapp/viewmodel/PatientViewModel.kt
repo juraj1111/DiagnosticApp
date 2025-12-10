@@ -20,6 +20,8 @@ class PatientViewModel : ViewModel() {
     private val _currentPatient = MutableLiveData<Patient>()
     val currentPatient: LiveData<Patient> = _currentPatient
 
+    val patientLive: LiveData<Patient?> = PatientRepository.patientLive
+
     fun testDB(){
         PatientRepository.testWebDAVConnection()
     }
@@ -30,6 +32,10 @@ class PatientViewModel : ViewModel() {
 
     fun setCurrentProtocol(protocol: ProtocolData) {
         PatientRepository.currentProtocol = protocol
+    }
+
+    fun notifyPatientChanged() {
+        _currentPatient.value = PatientRepository.currentPatient
     }
 
     fun createNewPatient(age: Int, sex: String, disease: String, onResult: (Boolean) -> Unit){

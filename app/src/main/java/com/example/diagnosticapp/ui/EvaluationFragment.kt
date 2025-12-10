@@ -1,7 +1,5 @@
 package com.example.diagnosticapp.ui
 
-import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +10,12 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
-import com.example.diagnosticapp.viewmodel.EvaluationViewModel
+import com.example.diagnosticapp.viewmodel.EvaluationVoiceViewModel
+import com.example.diagnosticapp.viewmodel.EvaluationWritingViewModel
 
 class EvaluationFragment : DialogFragment() {
 
-    private lateinit var viewModel: EvaluationViewModel
+    private lateinit var viewModel: EvaluationVoiceViewModel
     private lateinit var tvResult: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var btnRun: Button
@@ -34,17 +33,48 @@ class EvaluationFragment : DialogFragment() {
         progressBar = view.findViewById(R.id.progressBarEval)
         btnClose = view.findViewById(R.id.btnCloseEval)
 
-        viewModel = ViewModelProvider(this).get(EvaluationViewModel::class.java)
-
+        val mode = arguments?.getString("mode", "voice") ?: "voice"
         progressBar.visibility = View.VISIBLE
         tvResult.text = "Prebieha vyhodnocovanie..."
-        viewModel.evaluatePatient(requireContext()) { result ->
-            progressBar.visibility = View.GONE
-            tvResult.text = result
+
+        when (mode) {
+
+            "voice" -> {
+                val viewModel = ViewModelProvider(this)
+                    .get(EvaluationVoiceViewModel::class.java)
+
+                viewModel.evaluatePatient(requireContext()) { result ->
+                    progressBar.visibility = View.GONE
+                    tvResult.text = result
+                }
+            }
+
+            "writing" -> {
+                val viewModel = ViewModelProvider(this)
+                    .get(EvaluationWritingViewModel::class.java)
+
+                viewModel.evaluatePatient(requireContext()) { result ->
+                    progressBar.visibility = View.GONE
+                    tvResult.text = result
+                }
+            }
+
+            else -> {
+                progressBar.visibility = View.GONE
+                tvResult.text = "Neznámy typ hodnotenia."
+            }
         }
 
         btnClose.setOnClickListener { dismiss() }
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(
+            resources.getDimensionPixelSize(R.dimen.dialog_width),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 }

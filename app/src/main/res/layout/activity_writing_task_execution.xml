@@ -47,7 +47,7 @@
             android:src="@drawable/task1_writing" />
 
         <!-- Drawing view overlaid on top -->
-        <com.example.diagnosticapp.viewmodel.WritingViewModel
+        <com.example.diagnosticapp.viewmodel.WritingView
             android:id="@+id/drawingView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

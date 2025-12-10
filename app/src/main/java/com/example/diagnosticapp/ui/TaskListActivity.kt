@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.data.model.ProtocolData
@@ -60,9 +61,20 @@ class TaskListActivity : BaseActivity(),
 
         btnEvaluate.setOnClickListener {
             val fragment = EvaluationFragment()
+            if(protocolViewModel.getProtocol(patientViewModel.getCurrentProtocol()!!.protocolName)!!.type == 1){
+                fragment.arguments = bundleOf("mode" to "voice")
+            }else{
+                fragment.arguments = bundleOf("mode" to "writing")
+            }
             fragment.show(supportFragmentManager, "EvaluationFragment")
         }
         updateEvaluateButtonState(btnEvaluate)
+
+        patientViewModel.patientLive.observe(this) { updatedPatient ->
+            protocolData = updatedPatient?.protocols?.find { it.protocolName == protocolData?.protocolName }
+            updateButtonColors()
+            updateEvaluateButtonState(btnEvaluate)
+        }
     }
 
     override fun onResume() {
@@ -257,6 +269,7 @@ class TaskListActivity : BaseActivity(),
 
     private fun updateEvaluateButtonState(btn: Button) {
         val protocol = patientViewModel.getCurrentProtocol() ?: return
+        if (protocol.taskDataList.size == 0) return
         val allCompleted = protocol.taskDataList.all { it.status == TaskStatus.SAVED }
 
         btn.isEnabled = allCompleted
