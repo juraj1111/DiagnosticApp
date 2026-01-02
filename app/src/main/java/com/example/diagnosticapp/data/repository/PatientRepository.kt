@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.diagnosticapp.data.model.Patient
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.BuildConfig
+import com.example.diagnosticapp.data.model.PatientIndexEntry
 import com.example.diagnosticapp.data.model.ProtocolData
 import com.example.diagnosticapp.data.model.ProtocolDefinition
 import com.example.diagnosticapp.data.model.TaskData
@@ -202,6 +203,10 @@ object PatientRepository {
             val json = Json.encodeToString(patient)
             Log.d("PatientRepository", "Uploading to: $baseUrl$remotePath/patient.json")
             sardine.put("$baseUrl$remotePath/patient.json", json.toByteArray())
+
+            // Update the index after successfully saving the patient
+            updatePatientIndex(patient)
+
             true
         }catch (e: Exception){
             Log.e("PatientRepository", "Error updating patient: ${e.message}", e)
@@ -257,5 +262,136 @@ object PatientRepository {
         protocolData.taskDataList = updatedTaskDataList
     }
 
+    suspend fun fetchPatientIndex(disease: String): List<PatientIndexEntry> =
+        withContext(Dispatchers.IO) {
+            val sardine = OkHttpSardine().apply {
+                setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+            }
 
+            val indexPath = "${BuildConfig.URL}$disease/patients_index.json"
+            if (!sardine.exists(indexPath)) return@withContext emptyList()
+
+            val json = sardine.get(indexPath).readBytes().toString(Charsets.UTF_8)
+            Json.decodeFromString(json)
+        }
+
+
+    /**
+     * Updates the patient index file by adding or updating a patient entry
+     */
+    suspend fun updatePatientIndex(patient: Patient): Boolean = withContext(Dispatchers.IO) {
+        val sardine = OkHttpSardine()
+        sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+
+        val baseUrl = BuildConfig.URL
+        val indexPath = "${baseUrl}${patient.disease}/patients_index.json"
+
+        return@withContext try {
+            // Fetch existing index or create empty list
+            val currentIndex = try {
+                if (sardine.exists(indexPath)) {
+                    val jsonBytes = sardine.get(indexPath).readBytes()
+                    Json.decodeFromString<List<PatientIndexEntry>>(String(jsonBytes)).toMutableList()
+                } else {
+                    mutableListOf()
+                }
+            } catch (e: Exception) {
+                Log.e("PatientRepository", "Error reading index, creating new: ${e.message}")
+                mutableListOf()
+            }
+
+            // Create new entry from patient
+            val newEntry = PatientIndexEntry(
+                id = patient.id,
+                age = patient.age,
+                sex = patient.sex
+            )
+
+            // Remove old entry if exists (update case)
+            currentIndex.removeAll { it.id == patient.id }
+
+            // Add new entry
+            currentIndex.add(newEntry)
+
+            // Sort by ID for consistency
+            currentIndex.sortBy { it.id }
+
+            // Serialize and upload
+            val json = Json { prettyPrint = true }.encodeToString(currentIndex)
+
+            // Ensure disease directory exists
+            ensureDirectoriesExist(sardine, baseUrl, patient.disease)
+
+            sardine.put(indexPath, json.toByteArray())
+            Log.i("PatientRepository", "Successfully updated patient index for ${patient.disease}")
+            true
+        } catch (e: Exception) {
+            Log.e("PatientRepository", "Error updating patient index: ${e.message}", e)
+            false
+        }
+    }
+
+    /**
+     * Removes a patient from the index
+     */
+    suspend fun removePatientFromIndex(patientId: Int, disease: String): Boolean = withContext(Dispatchers.IO) {
+        val sardine = OkHttpSardine()
+        sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+
+        val baseUrl = BuildConfig.URL
+        val indexPath = "${baseUrl}${disease}/patients_index.json"
+
+        return@withContext try {
+            if (!sardine.exists(indexPath)) {
+                Log.w("PatientRepository", "Index file does not exist")
+                return@withContext true // Nothing to remove
+            }
+
+            val jsonBytes = sardine.get(indexPath).readBytes()
+            val currentIndex = Json.decodeFromString<List<PatientIndexEntry>>(String(jsonBytes)).toMutableList()
+
+            // Remove the patient
+            val removed = currentIndex.removeAll { it.id == patientId }
+
+            if (removed) {
+                // Upload updated index
+                val json = Json { prettyPrint = true }.encodeToString(currentIndex)
+                sardine.put(indexPath, json.toByteArray())
+                Log.i("PatientRepository", "Removed patient $patientId from index")
+            } else {
+                Log.w("PatientRepository", "Patient $patientId not found in index")
+            }
+
+            true
+        } catch (e: Exception) {
+            Log.e("PatientRepository", "Error removing patient from index: ${e.message}", e)
+            false
+        }
+    }
+
+    /**
+     * Creates a new patient index file (overwrites existing)
+     */
+    suspend fun createPatientIndex(disease: String, patients: List<PatientIndexEntry>): Boolean =
+        withContext(Dispatchers.IO) {
+            val sardine = OkHttpSardine()
+            sardine.setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+
+            val baseUrl = BuildConfig.URL
+            val indexPath = "${baseUrl}${disease}/patients_index.json"
+
+            return@withContext try {
+                ensureDirectoriesExist(sardine, baseUrl, disease)
+
+                val sortedPatients = patients.sortedBy { it.id }
+                val json = Json { prettyPrint = true }.encodeToString(sortedPatients)
+
+                sardine.put(indexPath, json.toByteArray())
+                Log.i("PatientRepository", "Created patient index for $disease with ${patients.size} entries")
+                true
+            } catch (e: Exception) {
+                Log.e("PatientRepository", "Error creating patient index: ${e.message}", e)
+                false
+            }
+        }
 }

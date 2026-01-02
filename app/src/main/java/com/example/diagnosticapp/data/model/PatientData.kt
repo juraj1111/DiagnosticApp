@@ -26,3 +26,10 @@ data class TaskData(
     var resultFilePath: String? = null,  // Path to saved result
     var type: Int //typ 1 pre hlas, typ 2 pre pismo
 )
+
+@Serializable
+data class PatientIndexEntry(
+    val id: Int,
+    val age: Int,
+    val sex: String
+)
