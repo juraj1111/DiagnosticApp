@@ -87,25 +87,48 @@ class PatientViewModel : ViewModel() {
         return PatientRepository.currentPatient
     }
 
+    // Replace the existing createExistingPatient function in PatientViewModel
+
     fun createExistingPatient(id: Int, disease: String, onResult: (Boolean) -> Unit){
         viewModelScope.launch {
             val patient: Patient? = PatientRepository.fetchPatient(id, disease)
-
-            val protocols = createPatientProtocols()
-            for(protocol in protocols){
-                if(patient?.protocols?.find { it.protocolName == protocol.protocolName } == null){
-                    patient?.protocols?.add(protocol)
-                }
-            }
-
-
-            PatientRepository.isUpdated = true
 
             if (patient == null) {
                 onResult(false)
                 return@launch
             }
 
+            // Get all current protocol definitions
+            val currentProtocols = ProtocolRepository.protocols
+            val currentProtocolNames = currentProtocols.map { it.name }.toSet()
+
+            // Remove protocols that no longer exist (deleted protocols)
+            patient.protocols.removeAll { protocolData ->
+                !currentProtocolNames.contains(protocolData.protocolName)
+            }
+
+            // Add any new protocols that were created after this patient
+            val existingProtocolNames = patient.protocols.map { it.protocolName }.toSet()
+            val newProtocols = currentProtocols.filter {
+                !existingProtocolNames.contains(it.name)
+            }
+
+            newProtocols.forEach { protocolDef ->
+                val newProtocolData = ProtocolData(
+                    protocolName = protocolDef.name,
+                    taskDataList = protocolDef.tasks.map { taskDef ->
+                        TaskData(
+                            id = taskDef.id,
+                            status = TaskStatus.UNCOMPLETED,
+                            resultFilePath = null,
+                            type = taskDef.type
+                        )
+                    }.toMutableList()
+                )
+                patient.protocols.add(newProtocolData)
+            }
+
+            PatientRepository.isUpdated = true
             PatientRepository.currentPatient = patient
 
             onResult(true)
@@ -155,4 +178,39 @@ class PatientViewModel : ViewModel() {
         return safe
     }
 
+    fun syncPatientProtocols() {
+        val patient = PatientRepository.currentPatient ?: return
+
+        // Get all current protocol definitions
+        val currentProtocols = ProtocolRepository.protocols
+        val currentProtocolNames = currentProtocols.map { it.name }.toSet()
+
+        // Remove protocols that no longer exist
+        patient.protocols.removeAll { protocolData ->
+            !currentProtocolNames.contains(protocolData.protocolName)
+        }
+
+        // Add any new protocols that were created after this patient
+        val existingProtocolNames = patient.protocols.map { it.protocolName }.toSet()
+        val newProtocols = currentProtocols.filter {
+            !existingProtocolNames.contains(it.name)
+        }
+
+        newProtocols.forEach { protocolDef ->
+            val newProtocolData = ProtocolData(
+                protocolName = protocolDef.name,
+                taskDataList = protocolDef.tasks.map { taskDef ->
+                    TaskData(
+                        id = taskDef.id,
+                        status = TaskStatus.UNCOMPLETED,
+                        resultFilePath = null,
+                        type = taskDef.type
+                    )
+                }.toMutableList()
+            )
+            patient.protocols.add(newProtocolData)
+        }
+
+        _currentPatient.value = patient
+    }
 }

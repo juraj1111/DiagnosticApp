@@ -33,7 +33,7 @@
                     android:id="@+id/titleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Patient"
+                    android:text="Výber pacienta"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"/>
@@ -42,7 +42,7 @@
                     android:id="@+id/subtitleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Choose a patient to begin assessment"
+                    android:text="Vyberte pacienta pre začatie protokolu"
                     android:textSize="14sp"
                     android:textColor="#666666"/>
             </LinearLayout>
@@ -51,14 +51,14 @@
                 android:id="@+id/manageProtocolsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manage Protocols"/>
+                android:text="Správa protkolov"/>
 
             <Button
                 android:id="@+id/addPatientButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Add Patient"/>
+                android:text="Pridať pacienta"/>
         </LinearLayout>
 
         <!-- Search -->
@@ -71,10 +71,27 @@
                 android:id="@+id/searchEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Search patients"/>
+                android:hint="Vyhľadať pacienta"/>
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
+
+    <!-- Empty State Text -->
+    <TextView
+        android:id="@+id/emptyStateText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Načítavanie pacientov..."
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Patient List -->
     <androidx.recyclerview.widget.RecyclerView

@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:strokeWidth="2dp"
-    app:strokeColor="#DDDDDD">
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="@android:color/white">
 
         <ImageView
             android:id="@+id/avatarImage"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:src="@drawable/ic_menu_avatar"
-            android:background="@android:color/darker_gray"
-            android:padding="12dp"/>
+            android:background="@android:color/white"
+            android:padding="12dp"
+            android:contentDescription="Patient avatar"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -34,13 +36,16 @@
                 android:id="@+id/patientIdText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Pacient #0001"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/patientInfoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Vek • Pohlavie"
                 android:textSize="14sp"
                 android:textColor="#666666"/>
 
@@ -57,6 +62,7 @@
                 android:id="@+id/protocolCountText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Počet protokolov"
                 android:textSize="12sp"
                 android:textColor="#999999"
                 android:layout_marginTop="8dp"/>
@@ -64,4 +70,4 @@
         </LinearLayout>
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

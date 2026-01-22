@@ -269,6 +269,7 @@ object PatientRepository {
             }
 
             val indexPath = "${BuildConfig.URL}$disease/patients_index.json"
+            Log.d("PatientRepository", "Index path: ${indexPath}")
             if (!sardine.exists(indexPath)) return@withContext emptyList()
 
             val json = sardine.get(indexPath).readBytes().toString(Charsets.UTF_8)

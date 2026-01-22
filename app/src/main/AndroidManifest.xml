@@ -18,7 +18,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.PatientListActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.DiagnosticApp">
@@ -38,6 +38,9 @@
         <activity android:name=".ui.WritingTaskActivity"/>
         <activity android:name=".ui.WritingTaskExecutionActivity"/>
         <activity android:name=".ui.PatientSelectionActivity"/>
+        <activity android:name=".ui.ProtocolManagerActivity"/>
+        <activity android:name=".ui.PatientDetailActivity"/>
+
 
     </application>
 </manifest>
