@@ -26,11 +26,28 @@ class EvaluationWritingViewModel : ViewModel() {
 
                 env = OrtEnvironment.getEnvironment()
 
-                // Load ONNX model
-                val modelFile = File.createTempFile("handwriting_model", ".onnx", context.cacheDir)
-                context.assets.open("handwriting_rf.onnx").use { input ->
-                    FileOutputStream(modelFile).use { output -> input.copyTo(output) }
+                // Get active writing model
+                val activeModel = com.example.diagnosticapp.data.repository.ModelRepository.getActiveModel(2)
+                if (activeModel == null) {
+                    withContext(Dispatchers.Main) {
+                        onResult("Chyba: Žiadny aktívny písací model")
+                    }
+                    return@launch
                 }
+
+                // Load model from file or assets
+                val modelFile = if (activeModel.isDefault) {
+                    // Load from assets
+                    File.createTempFile("handwriting_model", ".onnx", context.cacheDir).apply {
+                        context.assets.open(activeModel.filePath).use { input ->
+                            FileOutputStream(this).use { output -> input.copyTo(output) }
+                        }
+                    }
+                } else {
+                    // Use custom model file
+                    File(activeModel.filePath)
+                }
+
                 Log.d(TAG, "Model loaded: ${modelFile.absolutePath}")
 
                 session = env.createSession(modelFile.absolutePath, OrtSession.SessionOptions())

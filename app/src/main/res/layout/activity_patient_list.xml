@@ -33,7 +33,7 @@
                     android:id="@+id/titleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Výber pacienta"
+                    android:text="Select Patient"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"/>
@@ -42,7 +42,7 @@
                     android:id="@+id/subtitleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Vyberte pacienta pre začatie protokolu"
+                    android:text="Choose a patient to begin assessment"
                     android:textSize="14sp"
                     android:textColor="#666666"/>
             </LinearLayout>
@@ -51,14 +51,20 @@
                 android:id="@+id/manageProtocolsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Správa protkolov"/>
+                android:text="Manage Protocols" />
+
+            <Button
+                android:id="@+id/manageModelsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Správa modelov" />
 
             <Button
                 android:id="@+id/addPatientButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Pridať pacienta"/>
+                android:text="Add Patient"/>
         </LinearLayout>
 
         <!-- Search -->
@@ -71,7 +77,7 @@
                 android:id="@+id/searchEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Vyhľadať pacienta"/>
+                android:hint="Search patients"/>
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
@@ -81,7 +87,7 @@
         android:id="@+id/emptyStateText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Načítavanie pacientov..."
+        android:text="Loading patients..."
         android:textSize="16sp"
         android:textColor="#666666"
         android:textAlignment="center"

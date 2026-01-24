@@ -31,6 +31,7 @@ class PatientListActivity : AppCompatActivity() {
     private lateinit var manageProtocolsButton: Button
     private lateinit var addPatientButton: Button
     private lateinit var emptyStateText: TextView
+    private lateinit var manageModelsButton: Button
 
     private lateinit var patientAdapter: PatientAdapter
     private lateinit var viewModel: PatientViewModel
@@ -63,6 +64,7 @@ class PatientListActivity : AppCompatActivity() {
         manageProtocolsButton = findViewById(R.id.manageProtocolsButton)
         addPatientButton = findViewById(R.id.addPatientButton)
         emptyStateText = findViewById(R.id.emptyStateText)
+        manageModelsButton = findViewById(R.id.manageModelsButton)
     }
 
     private fun setupRecyclerView() {
@@ -101,6 +103,11 @@ class PatientListActivity : AppCompatActivity() {
 
         addPatientButton.setOnClickListener {
             onAddPatientClick()
+        }
+
+        manageModelsButton.setOnClickListener {
+            val intent = Intent(this, ModelManagerActivity::class.java)
+            startActivity(intent)
         }
     }
 

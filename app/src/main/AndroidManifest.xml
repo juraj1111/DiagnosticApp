@@ -40,6 +40,7 @@
         <activity android:name=".ui.PatientSelectionActivity"/>
         <activity android:name=".ui.ProtocolManagerActivity"/>
         <activity android:name=".ui.PatientDetailActivity"/>
+        <activity android:name=".ui.ModelManagerActivity"/>
 
 
     </application>

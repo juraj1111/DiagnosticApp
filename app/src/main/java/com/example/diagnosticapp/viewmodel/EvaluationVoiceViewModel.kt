@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import ai.onnxruntime.*
 import com.example.diagnosticapp.data.model.ProtocolData
 import com.example.diagnosticapp.utils.VoiceFeatureExtractorV2
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.FloatBuffer
@@ -23,9 +24,27 @@ class EvaluationVoiceViewModel : ViewModel() {
 
             try {
                 env = OrtEnvironment.getEnvironment()
-                val modelFile = File.createTempFile("model", ".onnx", context.cacheDir)
-                context.assets.open("rf_model.onnx").use { input ->
-                    FileOutputStream(modelFile).use { output -> input.copyTo(output) }
+
+                // Get active voice model
+                val activeModel = com.example.diagnosticapp.data.repository.ModelRepository.getActiveModel(1)
+                if (activeModel == null) {
+                    withContext(Dispatchers.Main) {
+                        onResult("Chyba: Žiadny aktívny hlasový model")
+                    }
+                    return@launch
+                }
+
+                // Load model from file or assets
+                val modelFile = if (activeModel.isDefault) {
+                    // Load from assets
+                    File.createTempFile("model", ".onnx", context.cacheDir).apply {
+                        context.assets.open(activeModel.filePath).use { input ->
+                            FileOutputStream(this).use { output -> input.copyTo(output) }
+                        }
+                    }
+                } else {
+                    // Use custom model file
+                    File(activeModel.filePath)
                 }
 
                 session = env.createSession(modelFile.absolutePath, OrtSession.SessionOptions())
