@@ -28,7 +28,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/baseline_arrow_back_24"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Back"/>
+                android:contentDescription="Back" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -73,6 +73,38 @@
             android:text="Pacient #0001 • Hlasový protokol"
             android:textSize="16sp"
             android:textColor="#666666"/>
+
+        <!-- Evaluation Status -->
+        <LinearLayout
+            android:id="@+id/evaluationContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vyhodnotenie:"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/evaluationStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zdravý"
+                android:textSize="12sp"
+                android:textColor="#22C55E"
+                android:background="#DCFCE7"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Tasks Grid -->

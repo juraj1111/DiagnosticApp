@@ -97,7 +97,7 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:layout_marginStart="16dp"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
                 <!-- Evaluation Percentage -->
                 <TextView

@@ -16,7 +16,9 @@ data class Patient(
 @Serializable
 data class ProtocolData(
     var protocolName: String,
-    var taskDataList: MutableList<TaskData>
+    var taskDataList: MutableList<TaskData>,
+    var evaluationStatus: String? = null,
+    var evaluationProbability: Float? = null
 )
 
 @Serializable

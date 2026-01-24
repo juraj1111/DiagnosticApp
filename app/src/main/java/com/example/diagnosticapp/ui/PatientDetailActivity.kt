@@ -44,6 +44,24 @@ class PatientDetailActivity : AppCompatActivity() {
         loadPatientData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Reload patient data to get latest evaluation results
+        val patient = patientViewModel.getCurrentPatient()
+        if (patient != null) {
+            // Reload protocols to show updated evaluation status
+            val allProtocolDefinitions = protocolViewModel.getAllProtocols()
+            val existingProtocolNames = allProtocolDefinitions.map { it.name }.toSet()
+
+            // Filter patient protocols to only include those that still exist
+            val validProtocols = patient.protocols.filter {
+                existingProtocolNames.contains(it.protocolName)
+            }
+
+            protocolAdapter.updateProtocols(validProtocols, allProtocolDefinitions)
+        }
+    }
+
     private fun initViews() {
         backButton = findViewById(R.id.backButton)
         patientIdText = findViewById(R.id.patientIdText)
@@ -159,9 +177,24 @@ class ProtocolSelectionAdapter(
             val totalTasks = protocolData.taskDataList.size
             protocolProgressText.text = "$completedTasks / $totalTasks úloh dokončených"
 
-            // TODO: Show evaluation status if available
-            // evaluationStatusBadge.visibility = View.VISIBLE
-            // evaluationPercentageText.visibility = View.VISIBLE
+            val evaluationStatus = protocolData.evaluationStatus
+            val evaluationProbability = protocolData.evaluationProbability
+
+            if (evaluationStatus != null && evaluationProbability != null) {
+                evaluationStatusBadge.visibility = View.VISIBLE
+
+                if (evaluationStatus == "Healthy") {
+                    evaluationStatusBadge.text = "Zdravý"
+                    evaluationStatusBadge.setTextColor(0xFF22C55E.toInt())
+                    evaluationStatusBadge.setBackgroundColor(0xFFDCFCE7.toInt())
+                } else {
+                    evaluationStatusBadge.text = "Choroba"
+                    evaluationStatusBadge.setTextColor(0xFFEF4444.toInt())
+                    evaluationStatusBadge.setBackgroundColor(0xFFFEE2E2.toInt())
+                }
+            } else {
+                evaluationStatusBadge.visibility = View.GONE
+            }
 
             itemView.setOnClickListener {
                 onProtocolClick(protocolData)
