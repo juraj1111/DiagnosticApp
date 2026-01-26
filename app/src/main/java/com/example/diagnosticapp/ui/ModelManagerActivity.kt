@@ -3,6 +3,7 @@ package com.example.diagnosticapp.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -107,33 +108,58 @@ class ModelManagerActivity : AppCompatActivity() {
     }
 
     private fun handleFileSelected(fileUri: String) {
-        // Get the actual file path
-        val file = File(fileUri.replace("file://", ""))
-        
-        if (!file.exists()) {
-            Toast.makeText(this, "Súbor nebol nájdený", Toast.LENGTH_SHORT).show()
-            return
-        }
+        try {
+            val uri = android.net.Uri.parse(fileUri)
 
-        if (!file.name.endsWith(".onnx")) {
-            Toast.makeText(this, "Prosím vyberte .onnx súbor", Toast.LENGTH_SHORT).show()
-            return
-        }
+            // Get the file name
+            val fileName = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                cursor.moveToFirst()
+                cursor.getString(nameIndex)
+            } ?: "model.onnx"
 
-        val modelName = file.nameWithoutExtension
-        val success = ModelRepository.addModel(this, modelName, file.absolutePath, uploadingType)
+            // Validate .onnx extension
+            if (!fileName.endsWith(".onnx")) {
+                Toast.makeText(this, "Prosím vyberte .onnx súbor", Toast.LENGTH_SHORT).show()
+                return
+            }
 
-        if (success) {
-            Toast.makeText(this, "Model úspešne pridaný", Toast.LENGTH_SHORT).show()
-            loadModels()
-        } else {
-            Toast.makeText(this, "Pridanie modelu zlyhalo", Toast.LENGTH_SHORT).show()
+            // Copy file to internal storage
+            val modelsDir = File(filesDir, "custom_models")
+            if (!modelsDir.exists()) {
+                modelsDir.mkdirs()
+            }
+
+            val destFile = File(modelsDir, fileName)
+            contentResolver.openInputStream(uri)?.use { input ->
+                destFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            if (!destFile.exists()) {
+                Toast.makeText(this, "Súbor nebol nájdený", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val modelName = fileName.removeSuffix(".onnx")
+            val success = ModelRepository.addModel(this, modelName, destFile.absolutePath, uploadingType)
+
+            if (success) {
+                Toast.makeText(this, "Model úspešne pridaný", Toast.LENGTH_SHORT).show()
+                loadModels()
+            } else {
+                Toast.makeText(this, "Pridanie modelu zlyhalo", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e("ModelManager", "Error handling file: ${e.message}", e)
+            Toast.makeText(this, "Chyba pri spracovaní súboru: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun loadModels() {
         val allModels = ModelRepository.getAllModels()
-        
+
         val voiceModels = allModels.filter { it.type == 1 }
         val writingModels = allModels.filter { it.type == 2 }
 
@@ -143,7 +169,7 @@ class ModelManagerActivity : AppCompatActivity() {
 
     private fun setActiveModel(model: ModelData) {
         val success = ModelRepository.setActiveModel(this, model.id)
-        
+
         if (success) {
             Toast.makeText(this, "Model aktivovaný: ${model.name}", Toast.LENGTH_SHORT).show()
             loadModels()
@@ -164,7 +190,7 @@ class ModelManagerActivity : AppCompatActivity() {
         }
 
         val success = ModelRepository.deleteModel(this, model.id)
-        
+
         if (success) {
             Toast.makeText(this, "Model vymazaný", Toast.LENGTH_SHORT).show()
             loadModels()
@@ -194,7 +220,7 @@ class ModelAdapter(
 
         fun bind(model: ModelData) {
             modelNameText.text = model.name
-            
+
             modelInfoText.text = if (model.isDefault) {
                 "Vstavený predvolený model"
             } else {

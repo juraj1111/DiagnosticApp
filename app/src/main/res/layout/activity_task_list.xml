@@ -56,6 +56,13 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/black"/>
 
+            <Button
+                android:id="@+id/reevaluateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prehodnotiť"
+                android:layout_marginEnd="8dp"/>
+
             <TextView
                 android:id="@+id/progressText"
                 android:layout_width="wrap_content"

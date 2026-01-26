@@ -33,7 +33,7 @@
                     android:id="@+id/titleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Patient"
+                    android:text="Zoznam pacientov"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"/>
@@ -42,7 +42,7 @@
                     android:id="@+id/subtitleText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Choose a patient to begin assessment"
+                    android:text="Vyberte pacienta pre začatie hodnotenia"
                     android:textSize="14sp"
                     android:textColor="#666666"/>
             </LinearLayout>
@@ -51,7 +51,7 @@
                 android:id="@+id/manageProtocolsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manage Protocols" />
+                android:text="Správa protokolov" />
 
             <Button
                 android:id="@+id/manageModelsButton"
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Add Patient"/>
+                android:text="Pridať pacienta"/>
         </LinearLayout>
 
         <!-- Search -->
@@ -77,7 +77,7 @@
                 android:id="@+id/searchEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Search patients"/>
+                android:hint="Hľadajte pacienta"/>
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>

@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 class TaskListActivity : AppCompatActivity() {
 
     private lateinit var backButton: ImageButton
+    private lateinit var reevaluateButton: android.widget.Button
     private lateinit var progressText: TextView
     private lateinit var patientProtocolInfoText: TextView
     private lateinit var evaluationContainer: LinearLayout
@@ -74,6 +75,7 @@ class TaskListActivity : AppCompatActivity() {
 
     private fun initViews() {
         backButton = findViewById(R.id.backButton)
+        reevaluateButton = findViewById(R.id.reevaluateButton)
         progressText = findViewById(R.id.progressText)
         patientProtocolInfoText = findViewById(R.id.patientProtocolInfoText)
         evaluationContainer = findViewById(R.id.evaluationContainer)
@@ -99,6 +101,10 @@ class TaskListActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
             finish()
+        }
+
+        reevaluateButton.setOnClickListener {
+            onReevaluateClick()
         }
     }
 
@@ -139,6 +145,9 @@ class TaskListActivity : AppCompatActivity() {
         }
         val totalCount = definition.tasks.size
         progressText.text = "$completedCount / $totalCount úloh dokončených"
+
+        // Enable/disable reevaluate button based on completed tasks
+        reevaluateButton.isEnabled = completedCount > 0
 
         // Update evaluation status display
         val evaluationStatus = protocol.evaluationStatus
@@ -257,6 +266,48 @@ class TaskListActivity : AppCompatActivity() {
             val patient = patientViewModel.getCurrentPatient()
             if (patient != null) {
                 com.example.diagnosticapp.data.repository.PatientRepository.updatePatient(patient)
+            }
+        }
+    }
+
+    private fun onReevaluateClick() {
+        val protocol = protocolData ?: return
+        val definition = protocolDef ?: return
+
+        // Check if there are any completed tasks
+        val hasCompletedTasks = protocol.taskDataList.any {
+            it.status == TaskStatus.COMPLETED || it.status == TaskStatus.SAVED
+        }
+
+        if (!hasCompletedTasks) {
+            Toast.makeText(this, "Žiadne dokončené úlohy na prehodnotenie", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Toast.makeText(this, "Prehodnocujem s aktívnym modelom...", Toast.LENGTH_SHORT).show()
+
+        Log.d("TaskListActivity", "Manual reevaluation triggered...")
+
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                when (definition.type) {
+                    1 -> runVoiceEvaluation(protocol)
+                    2 -> runWritingEvaluation(protocol)
+                    else -> {
+                        Toast.makeText(
+                            this@TaskListActivity,
+                            "Neznámy typ protokolu",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("TaskListActivity", "Error during reevaluation: ${e.message}", e)
+                Toast.makeText(
+                    this@TaskListActivity,
+                    "Chyba pri prehodnotení: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
