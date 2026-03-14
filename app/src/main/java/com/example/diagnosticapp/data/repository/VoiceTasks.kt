@@ -5,83 +5,81 @@ import com.example.diagnosticapp.data.model.TaskDefinition
 object VoiceTasks {
 
     private val tasks = mutableListOf(
+        // Samohláska A (2 fonácie)
         TaskDefinition(
             id = "task1",
-            name = "Dlhá samohláska A",
-            description = "Dlhá samohláska A, cca 10 sekúnd na normálnej úrovni.",
+            name = "Samohláska A – 1. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku A na jedinom výdychu tak dlho, kým sa vám nevyprázdnia pľúca.",
             type = 1,
             order = 1
         ),
         TaskDefinition(
             id = "task2",
-            name = "Dlhá samohláska A",
-            description = "Dlhá samohláska A, cca 10 sekúnd na hlasitej úrovni.",
+            name = "Samohláska A – 2. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku A po dobu 5 sekúnd.",
             type = 1,
             order = 2
         ),
+        // Samohláska E (2 fonácie)
         TaskDefinition(
             id = "task3",
-            name = "Dlhá samohláska E",
-            description = "Dlhá samohláska E, cca 10 sekúnd na normálnej úrovni.",
+            name = "Samohláska E – 1. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku E na jedinom výdychu tak dlho, kým sa vám nevyprázdnia pľúca.",
             type = 1,
             order = 3
         ),
         TaskDefinition(
             id = "task4",
-            name = "Dlhá samohláska E",
-            description = "Dlhá samohláska E, cca 10 sekúnd na hlasitej úrovni.",
+            name = "Samohláska E – 2. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku E po dobu 5 sekúnd.",
             type = 1,
             order = 4
         ),
+        // Samohláska I (2 fonácie)
         TaskDefinition(
             id = "task5",
-            name = "Opakovať PA-TA-KA",
-            description = "Opakovať PA-TA-KA prirodzenou rýchlosťou (5x – 8x).",
+            name = "Samohláska I – 1. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku I na jedinom výdychu tak dlho, kým sa vám nevyprázdnia pľúca.",
             type = 1,
             order = 5
         ),
         TaskDefinition(
             id = "task6",
-            name = "Rýchlo opakovať PA-TA-KA",
-            description = "Opakovať PA-TA-KA najrýchlejšou možnou rýchlosťou (5x – 8x).",
+            name = "Samohláska I – 2. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku I po dobu 5 sekúnd.",
             type = 1,
             order = 6
         ),
+        // Samohláska O (2 fonácie)
         TaskDefinition(
             id = "task7",
-            name = "Opakovať PA-PA-PA",
-            description = "Opakovať PA-PA-PA prirodzenou rýchlosťou (5x – 8x).",
+            name = "Samohláska O – 1. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku O na jedinom výdychu tak dlho, kým sa vám nevyprázdnia pľúca.",
             type = 1,
             order = 7
         ),
         TaskDefinition(
             id = "task8",
-            name = "Rýchlo opakovať PA-PA-PA",
-            description = "Opakovať PA-PA-PA najrýchlejšou možnou rýchlosťou (5x – 8x).",
+            name = "Samohláska O – 2. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku O po dobu 5 sekúnd.",
             type = 1,
             order = 8
         ),
+        // Samohláska U (2 fonácie)
         TaskDefinition(
             id = "task9",
-            name = "Čítanie viet",
-            description = "Čítať doleuvedené vety. Slovo podčiarknuté a zvýraznené veľkými písmenami zdôrazniť.\n\nDnes sme to už nestihli, ale možno ZAJTRA navštívime všetkých známych.\nAj keď sme spolu telefonovali možno zajtra NAVŠTÍVIME všetkých známych.\nPríbuzných sme už navštívili, možno zajtra navštívime všetkých ZNÁMYCH.",
+            name = "Samohláska U – 1. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku U na jedinom výdychu tak dlho, kým sa vám nevyprázdnia pľúca.",
             type = 1,
             order = 9
         ),
         TaskDefinition(
             id = "task10",
-            name = "Čítanie textu",
-            description = "Ešte aj koncom 19. storočia domáci aj pocestní prechádzali cez radové typy dedín, aj cez rozptýlené osídlenie...",
+            name = "Samohláska U – 2. fonácia",
+            description = "Zhlboka sa nadýchnite a fonujte samohlásku U po dobu 5 sekúnd.",
             type = 1,
             order = 10
         )
-//        TaskDefinition(
-//            id = "task11",
-//            name = "Voľná reč",
-//            description = "Porozprávať niečo o koníčkoch, čomu sa venuje vo voľnom čase, kde pracoval/pracuje.",
-//            type = 1,
-//            order = 11
-//        )
     )
 
     fun getAllTasks(): MutableList<TaskDefinition> = tasks

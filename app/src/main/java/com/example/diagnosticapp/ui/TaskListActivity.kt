@@ -28,6 +28,7 @@ import com.example.diagnosticapp.viewmodel.ProtocolViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TaskListActivity : AppCompatActivity() {
 
@@ -266,6 +267,16 @@ class TaskListActivity : AppCompatActivity() {
             val patient = patientViewModel.getCurrentPatient()
             if (patient != null) {
                 com.example.diagnosticapp.data.repository.PatientRepository.updatePatient(patient)
+
+                // Update UI on main thread
+                withContext(Dispatchers.Main) {
+                    updateUI()
+//                    Toast.makeText(
+//                        this@TaskListActivity,
+//                        "Hodnotenie dokončené",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+                }
             }
         }
     }
