@@ -33,43 +33,4 @@ class ProtocolViewModel(application: Application) : AndroidViewModel(application
         ProtocolRepository.deleteUserProtocol(protocolDefinition, getApplication<Application>().applicationContext)
     }
 
-    fun addTaskToCurrentProtocol(task: TaskDefinition) {
-        val protocolDef = getProtocol(PatientRepository.currentProtocol!!.protocolName)
-        val patientProtocol = PatientRepository.currentProtocol
-
-        protocolDef?.tasks?.add(task)
-
-        patientProtocol?.taskDataList?.add(
-            TaskData(
-                id = task.id,
-                status = TaskStatus.UNCOMPLETED,
-                resultFilePath = null,
-                type = task.type
-            )
-        )
-
-        ProtocolRepository.saveUserProtocol(
-            protocolDef!!,
-            getApplication<Application>().applicationContext
-        )
-    }
-
-
-    fun removeTaskFromCurrentProtocol(taskId: String) {
-        val currentProtocolData = PatientRepository.currentProtocol ?: return
-        val currentProtocolDef = ProtocolRepository.protocols.find { it.name == currentProtocolData.protocolName } ?: return
-
-        currentProtocolDef.tasks.removeIf { it.id == taskId }
-        currentProtocolData.taskDataList.removeIf { it.id == taskId }
-
-        ProtocolRepository.saveUserProtocol(currentProtocolDef, getApplication<Application>().applicationContext)
-    }
-
-    fun renameProtocol(oldName: String, newName: String) {
-        ProtocolRepository.renameProtocol(
-            oldName,
-            newName,
-            getApplication<Application>().applicationContext
-        )
-    }
 }

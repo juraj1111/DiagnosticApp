@@ -1,6 +1,5 @@
 package com.example.diagnosticapp.ui
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,7 +58,6 @@ class AddPatientFragment : DialogFragment() {
     private fun initViews(view: View) {
         ageEditText = view.findViewById(R.id.ageEditText)
         sexSpinner = view.findViewById(R.id.sexSpinner)
-//        diseaseSpinner = view.findViewById(R.id.diseaseSpinner)
         cancelButton = view.findViewById(R.id.cancelButton)
         addButton = view.findViewById(R.id.addButton)
     }
@@ -74,16 +72,6 @@ class AddPatientFragment : DialogFragment() {
         )
         sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         sexSpinner.adapter = sexAdapter
-
-        // Disease spinner
-//        val diseaseOptions = arrayOf("PD", "AD", "MS", "ALS")
-//        val diseaseAdapter = ArrayAdapter(
-//            requireContext(),
-//            android.R.layout.simple_spinner_item,
-//            diseaseOptions
-//        )
-//        diseaseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        diseaseSpinner.adapter = diseaseAdapter
     }
 
     private fun setupButtons() {
@@ -99,7 +87,6 @@ class AddPatientFragment : DialogFragment() {
     private fun handleAddPatient() {
         val ageText = ageEditText.text.toString()
         val sex = sexSpinner.selectedItem.toString()
-//        val disease = diseaseSpinner.selectedItem.toString()
         val disease = "PD"
 
         // Validation

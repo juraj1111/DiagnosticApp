@@ -7,8 +7,6 @@ import com.example.diagnosticapp.viewmodel.WritingView
 
 class WritingTestActivity : BaseActivity(){
 
-    private lateinit var btnErase : Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_writing_test)
@@ -19,10 +17,5 @@ class WritingTestActivity : BaseActivity(){
         btnErase.setOnClickListener {
             writingViewModel.clear()
         }
-//
-//        saveButton.setOnClickListener {
-//            drawingView.exportToFile(this)
-//            Toast.makeText(this, "Saved to SVC file", Toast.LENGTH_SHORT).show()
-//        }
     }
 }

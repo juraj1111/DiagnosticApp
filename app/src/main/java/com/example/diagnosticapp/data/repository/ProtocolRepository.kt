@@ -43,22 +43,6 @@ object ProtocolRepository {
         _protocols.addAll(loadUserProtocols(dir))
     }
 
-    fun addProtocol(protocol: ProtocolDefinition){
-        _protocols.removeIf { it.name == protocol.name }
-        _protocols.add(protocol)
-    }
-
-    private fun loadDefaultProtocols(context: Context): List<ProtocolDefinition> {
-        return try {
-            val inputStream = context.assets.open("default_protocols.json")
-            val json = inputStream.bufferedReader().use { it.readText() }
-            Json.decodeFromString(json)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-
     private fun loadUserProtocols(dir: File): List<ProtocolDefinition> {
         val list = mutableListOf<ProtocolDefinition>()
         dir.listFiles()?.forEach { file ->
@@ -111,17 +95,6 @@ object ProtocolRepository {
         }
 
         _protocols.removeIf { it.name == protocol.name }
-    }
-
-    fun removeTaskFromProtocol(protocolName: String, taskId: String, context: Context) {
-        val protocol = _protocols.find { it.name == protocolName } ?: return
-        val removed = protocol.tasks.removeIf { it.id == taskId }
-        if (removed) {
-            saveUserProtocol(protocol, context)
-            Log.d("ProtocolRepository", "Removed task $taskId from protocol $protocolName")
-        } else {
-            Log.w("ProtocolRepository", "Task $taskId not found in protocol $protocolName")
-        }
     }
 
     fun renameProtocol(oldName: String, newName: String, context: Context): Boolean {

@@ -28,16 +28,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.PatientInfoActivity" />
-        <activity android:name=".ui.PatientActivity" />
-        <activity android:name=".ui.VoiceTasksListActivity"/>
         <activity android:name=".ui.TaskListActivity"/>
         <activity android:name=".ui.VoiceTaskActivity"/>
-        <activity android:name=".ui.WritingTasksListActivity"/>
         <activity android:name=".ui.WritingTestActivity"/>
         <activity android:name=".ui.WritingTaskActivity"/>
         <activity android:name=".ui.WritingTaskExecutionActivity"/>
-        <activity android:name=".ui.PatientSelectionActivity"/>
         <activity android:name=".ui.ProtocolManagerActivity"/>
         <activity android:name=".ui.PatientDetailActivity"/>
         <activity android:name=".ui.ModelManagerActivity"/>
