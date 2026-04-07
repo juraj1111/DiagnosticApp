@@ -7,12 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.diagnosticapp.R
 import com.example.diagnosticapp.viewmodel.PlaybackState
 import com.example.diagnosticapp.viewmodel.RecordingState
 import com.example.diagnosticapp.viewmodel.VoiceTaskViewModel
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 
 enum class ExecutionState {
     START,
@@ -25,6 +32,23 @@ class VoiceTaskExecutionFragment : Fragment() {
 
     private var taskId: String? = null
     private var executionState: ExecutionState = ExecutionState.START
+    private lateinit var btnPlay : ImageView
+    private lateinit var viewModel : VoiceTaskViewModel
+
+    // Register the permission launcher as a class-level property
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                startRecordingWithPermission()
+            } else {
+                // Show a rationale message to the user
+                Toast.makeText(
+                    requireContext(),
+                    "Microphone permission is required to record audio.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +61,12 @@ class VoiceTaskExecutionFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_voice_task_execution, container, false)
 
-        val btnPlay = view.findViewById<ImageView>(R.id.record_button)
+        btnPlay = view.findViewById<ImageView>(R.id.record_button)
         val btnRestart = view.findViewById<ImageView>(R.id.restart_button)
         val btnSave = view.findViewById<ImageView>(R.id.save_button)
         val btnPause = view.findViewById<ImageView>(R.id.pause_button)
         val tvTime = view.findViewById<TextView>(R.id.time_textview)
-        val viewModel = ViewModelProvider(this)[VoiceTaskViewModel::class.java]
+        viewModel = ViewModelProvider(this)[VoiceTaskViewModel::class.java]
 
         viewModel.recordingTime.observe(viewLifecycleOwner) {
             if (executionState == ExecutionState.RECORDING) {
@@ -74,9 +98,7 @@ class VoiceTaskExecutionFragment : Fragment() {
         btnPlay.setOnClickListener {
             when (executionState) {
                 ExecutionState.START -> {
-                    executionState = ExecutionState.RECORDING
-                    btnPlay.setImageResource(R.drawable.stop_circle)
-                    viewModel.startRecording()
+                    checkAudioPermissionAndRecord()
                 }
                 ExecutionState.RECORDING -> {
                     // Disable button briefly while WAV file is being finalized
@@ -166,6 +188,41 @@ class VoiceTaskExecutionFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun checkAudioPermissionAndRecord() {
+        when {
+            // 1. Permission already granted — start immediately
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                startRecordingWithPermission()
+            }
+
+            // 2. Show rationale if the user previously denied (but didn't check "Don't ask again")
+            shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) -> {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Potrebné povolenie pre mikrofón")
+                    .setMessage("Táto aplikácia potrebuje prístup k mikrofónu pre záznam hlasu.")
+                    .setPositiveButton("Povoliť") { _, _ ->
+                        requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
+                    .setNegativeButton("Zrušiť", null)
+                    .show()
+            }
+
+            // 3. First time asking — request directly
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        }
+    }
+
+    private fun startRecordingWithPermission() {
+        executionState = ExecutionState.RECORDING
+        btnPlay.setImageResource(R.drawable.stop_circle)
+        viewModel.startRecording()
     }
 
     private fun formatTime(seconds: Int): String {

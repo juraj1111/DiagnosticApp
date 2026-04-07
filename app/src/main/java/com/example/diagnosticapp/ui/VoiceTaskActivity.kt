@@ -48,12 +48,4 @@ class VoiceTaskActivity : BaseActivity() {
             .commit()
     }
 
-    // Optional method if you trigger execution screen from somewhere else
-    fun loadTaskExecutionFragment() {
-        val fragment = VoiceTaskExecutionFragment.newInstance(taskId)
-        supportFragmentManager.beginTransaction()
-            .add(R.id.execution_container, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
 }

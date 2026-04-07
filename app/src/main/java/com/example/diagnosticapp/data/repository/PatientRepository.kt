@@ -1,9 +1,6 @@
 package com.example.diagnosticapp.data.repository
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.collection.emptyLongSet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.diagnosticapp.data.model.Patient
@@ -16,15 +13,13 @@ import com.example.diagnosticapp.data.model.TaskData
 
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
 import com.thegrizzlylabs.sardineandroid.impl.SardineException;
-import com.thegrizzlylabs.sardineandroid.util.SardineUtil;
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 import java.io.File
-import java.io.IOException
-import kotlin.math.log
+import java.text.Normalizer
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
@@ -85,18 +80,23 @@ object PatientRepository {
 
         Log.d("PatientRepository", "Updated task $taskId with file path: $filePath")
 
+        // FIX: wrapped entire coroutine body in try/catch to prevent crash when offline
         CoroutineScope(Dispatchers.IO).launch {
-            val patient = currentPatient ?: return@launch
-            val idFormatted = String.format("%04d", patient.id)
-            val protocolName = currentProtocol?.protocolName ?: "UnknownProtocol"
-            val remotePath = "${patient.disease}/$idFormatted/$protocolName/"
+            try {
+                val patient = currentPatient ?: return@launch
+                val idFormatted = String.format("%04d", patient.id)
+                val protocolName = sanitizeFolderName(currentProtocol?.protocolName ?: "UnknownProtocol")
+                val remotePath = "${patient.disease}/$idFormatted/$protocolName/"
 
-            if (uploadFileToNextcloud(remotePath, task)) {
-                updatePatient(patient)
-                isUpdated = true
-                Log.d("PatientRepository", "Auto-sync success for task $taskId")
-            } else {
-                Log.e("PatientRepository", "Auto-sync failed for task $taskId")
+                if (uploadFileToNextcloud(remotePath, task)) {
+                    updatePatient(patient)
+                    isUpdated = true
+                    Log.d("PatientRepository", "Auto-sync success for task $taskId")
+                } else {
+                    Log.e("PatientRepository", "Auto-sync failed for task $taskId")
+                }
+            } catch (e: Exception) {
+                Log.e("PatientRepository", "Auto-sync network error for task $taskId: ${e.javaClass.simpleName} — ${e.message}")
             }
         }
     }
@@ -131,11 +131,13 @@ object PatientRepository {
         // 1. Separate path into directory and filename
         val fullPath = baseUrl + remotePath + fileName
 
-        // 2. Recursively ensure directories exist
-        ensureDirectoriesExist(sardine, baseUrl, remotePath.substringBeforeLast("/"))
-
-        // 3. Upload file
+        // FIX: moved ensureDirectoriesExist + put into single try block
+        // so network errors during directory creation are also caught
         return try {
+            // 2. Recursively ensure directories exist
+            ensureDirectoriesExist(sardine, baseUrl, remotePath.substringBeforeLast("/"))
+
+            // 3. Upload file
             sardine.put(fullPath, fileBytes)
             Log.i("PatientRepository", "Successfully uploaded: $fullPath")
 
@@ -262,18 +264,24 @@ object PatientRepository {
         protocolData.taskDataList = updatedTaskDataList
     }
 
+    // FIX: added try/catch so network errors don't crash the app
     suspend fun fetchPatientIndex(disease: String): List<PatientIndexEntry> =
         withContext(Dispatchers.IO) {
-            val sardine = OkHttpSardine().apply {
-                setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+            try {
+                val sardine = OkHttpSardine().apply {
+                    setCredentials(BuildConfig.USERNAME, BuildConfig.PASSWORD)
+                }
+
+                val indexPath = "${BuildConfig.URL}$disease/patients_index.json"
+                Log.d("PatientRepository", "Index path: ${indexPath}")
+                if (!sardine.exists(indexPath)) return@withContext emptyList()
+
+                val json = sardine.get(indexPath).readBytes().toString(Charsets.UTF_8)
+                Json.decodeFromString(json)
+            } catch (e: Exception) {
+                Log.e("PatientRepository", "Error fetching patient index: ${e.message}", e)
+                throw e // re-throw so PatientListActivity shows "check internet" message
             }
-
-            val indexPath = "${BuildConfig.URL}$disease/patients_index.json"
-            Log.d("PatientRepository", "Index path: ${indexPath}")
-            if (!sardine.exists(indexPath)) return@withContext emptyList()
-
-            val json = sardine.get(indexPath).readBytes().toString(Charsets.UTF_8)
-            Json.decodeFromString(json)
         }
 
 
@@ -330,5 +338,19 @@ object PatientRepository {
             Log.e("PatientRepository", "Error updating patient index: ${e.message}", e)
             false
         }
+    }
+
+    fun sanitizeFolderName(name: String): String {
+        // 1. Remove accents (e.g. "Hlasový" → "Hlasovy")
+        val normalized = Normalizer.normalize(name, Normalizer.Form.NFD)
+            .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
+
+        // 2. Replace spaces with underscores
+        val noSpaces = normalized.replace(" ", "_")
+
+        // 3. Remove unsafe symbols (keep letters, numbers, underscores, and hyphens)
+        val safe = noSpaces.replace("[^A-Za-z0-9_\\-]".toRegex(), "")
+
+        return safe
     }
 }

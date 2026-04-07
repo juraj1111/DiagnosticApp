@@ -1,5 +1,6 @@
 package com.example.diagnosticapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +14,6 @@ import com.example.diagnosticapp.data.model.ProtocolData
 import com.example.diagnosticapp.data.model.TaskStatus
 import com.example.diagnosticapp.data.repository.ProtocolRepository
 import kotlinx.coroutines.withContext
-import java.text.Normalizer
 
 class PatientViewModel : ViewModel() {
 
@@ -128,8 +128,12 @@ class PatientViewModel : ViewModel() {
                 patient.protocols.add(newProtocolData)
             }
 
-            PatientRepository.isUpdated = true
             PatientRepository.currentPatient = patient
+            for (protocolDef in currentProtocols) {
+                PatientRepository.syncCurrentPatientWithProtocol(protocolDef)
+            }
+
+            PatientRepository.isUpdated = true
 
             onResult(true)
         }
@@ -146,7 +150,7 @@ class PatientViewModel : ViewModel() {
         val idFormatted: String = String.format("%04d", patient.id)
 
         for (protocol in patient.protocols){
-            val sanitizedFolderName = sanitizeFolderName(protocol.protocolName)
+            val sanitizedFolderName = PatientRepository.sanitizeFolderName(protocol.protocolName)
             val remoteVoicePath = "${patient.disease}/${idFormatted}/${sanitizedFolderName}/"
 
             for (task in protocol.taskDataList.filter { it.status == TaskStatus.COMPLETED }) {
@@ -164,18 +168,35 @@ class PatientViewModel : ViewModel() {
         success
     }
 
-    fun sanitizeFolderName(name: String): String {
-        // 1. Remove accents (e.g. "Hlasový" → "Hlasovy")
-        val normalized = Normalizer.normalize(name, Normalizer.Form.NFD)
-            .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
+    /**
+     * Silently retries uploading any tasks stuck at COMPLETED (not yet SAVED).
+     * Call this from onResume() of any activity — it runs in the background
+     * and does nothing if there's no pending work or no internet.
+     */
+    fun syncPendingUploads() {
+        val patient = PatientRepository.currentPatient ?: return
 
-        // 2. Replace spaces with underscores
-        val noSpaces = normalized.replace(" ", "_")
+        // Quick check: are there any COMPLETED (not SAVED) tasks?
+        val hasPending = patient.protocols.any { protocol ->
+            protocol.taskDataList.any { it.status == TaskStatus.COMPLETED }
+        }
+        if (!hasPending) return
 
-        // 3. Remove unsafe symbols (keep letters, numbers, underscores, and hyphens)
-        val safe = noSpaces.replace("[^A-Za-z0-9_\\-]".toRegex(), "")
+        Log.d("PatientViewModel", "Found pending uploads — retrying in background...")
 
-        return safe
+        viewModelScope.launch {
+            try {
+                val success = sendPatientData()
+                if (success) {
+                    Log.d("PatientViewModel", "Pending uploads synced successfully")
+                } else {
+                    Log.w("PatientViewModel", "Some uploads still pending — will retry later")
+                }
+            } catch (e: Exception) {
+                Log.e("PatientViewModel", "Sync retry failed: ${e.javaClass.simpleName} — ${e.message}")
+                // Silent failure — will retry on next onResume()
+            }
+        }
     }
 
     fun syncPatientProtocols() {

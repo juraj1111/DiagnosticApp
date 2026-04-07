@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.Log
 
 import com.example.diagnosticapp.data.model.ProtocolDefinition
-import com.example.diagnosticapp.data.model.TaskData
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -96,28 +94,4 @@ object ProtocolRepository {
 
         _protocols.removeIf { it.name == protocol.name }
     }
-
-    fun renameProtocol(oldName: String, newName: String, context: Context): Boolean {
-        val oldSafe = "${oldName.replace(" ", "_")}.json"
-        val newSafe = "${newName.replace(" ", "_")}.json"
-
-        val dir = File(context.filesDir, "protocols")
-        val oldFile = File(dir, oldSafe)
-        val newFile = File(dir, newSafe)
-
-        val protocol = _protocols.find { it.name == oldName } ?: return false
-        protocol.name = newName
-
-        if (oldFile.exists()) oldFile.renameTo(newFile)
-
-        _protocols.removeIf { it.name == oldName }
-        _protocols.add(protocol)
-
-        // Update in current patient if needed
-        val patient = PatientRepository.currentPatient
-        patient?.protocols?.find { it.protocolName == oldName }?.protocolName = newName
-
-        return true
-    }
-
 }

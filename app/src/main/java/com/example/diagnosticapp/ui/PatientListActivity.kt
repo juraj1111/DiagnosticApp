@@ -40,6 +40,7 @@ class PatientListActivity : AppCompatActivity() {
 
     // Current disease type - you might want to pass this as an intent extra
     private var currentDisease: String = "PD" // default, can be changed
+    private var loadFailed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +65,13 @@ class PatientListActivity : AppCompatActivity() {
         addPatientButton = findViewById(R.id.addPatientButton)
         emptyStateText = findViewById(R.id.emptyStateText)
         manageModelsButton = findViewById(R.id.manageModelsButton)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (loadFailed) {
+            loadPatients()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -129,7 +137,10 @@ class PatientListActivity : AppCompatActivity() {
                 Log.d("PatientListActivity", "Loaded ${patients.size} patients")
             } catch (e: Exception) {
                 Log.e("PatientListActivity", "Error loading patients: ${e.message}", e)
-                showEmptyState("Pripojenie k serveru neúspešné.\nProsím skontrolujte internetové pripojenie a skúste znova.", true)
+                showEmptyState("Pripojenie k serveru neúspešné.\nProsím skontrolujte internetové pripojenie.\n\nKliknite sem pre opakovanie.", true)
+
+                emptyStateText.setOnClickListener { loadPatients() }
+
                 Toast.makeText(
                     this@PatientListActivity,
                     "Načítanie pacientov zlyhalo",

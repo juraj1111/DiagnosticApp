@@ -60,6 +60,8 @@ class PatientDetailActivity : AppCompatActivity() {
 
             protocolAdapter.updateProtocols(validProtocols, allProtocolDefinitions)
         }
+
+        patientViewModel.syncPendingUploads()
     }
 
     private fun initViews() {

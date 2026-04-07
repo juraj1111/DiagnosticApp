@@ -61,6 +61,9 @@ class TaskListActivity : AppCompatActivity() {
 
         // Observe patient changes to update task statuses
         patientViewModel.patientLive.observe(this) { updatedPatient ->
+
+            if (updatedPatient?.id != patientViewModel.getCurrentPatient()?.id) return@observe
+
             protocolData = updatedPatient?.protocols?.find {
                 it.protocolName == protocolData?.protocolName
             }
@@ -72,6 +75,9 @@ class TaskListActivity : AppCompatActivity() {
         super.onResume()
         updateUI()
         runEvaluationIfNeeded()
+
+        // Retry uploading tasks stuck at COMPLETED (failed because of no internet)
+        patientViewModel.syncPendingUploads()
     }
 
     private fun initViews() {
@@ -248,9 +254,12 @@ class TaskListActivity : AppCompatActivity() {
         val isDisease = result.contains("príznaky choroby", ignoreCase = true)
 
         // Extract probability percentage
-        val probabilityRegex = """(\d+\.?\d*)%""".toRegex()
+        val probabilityRegex = """(\d+[.,]?\d*)%""".toRegex()
         val probabilityMatch = probabilityRegex.find(result)
-        val probability = probabilityMatch?.groupValues?.get(1)?.toFloatOrNull()?.div(100f)
+        val probability = probabilityMatch?.groupValues?.get(1)
+            ?.replace(",", ".")
+            ?.toFloatOrNull()
+            ?.div(100f)
 
         if (isHealthy) {
             protocol.evaluationStatus = "Healthy"
@@ -262,20 +271,33 @@ class TaskListActivity : AppCompatActivity() {
 
         Log.d("TaskListActivity", "Evaluation parsed: status=${protocol.evaluationStatus}, probability=${protocol.evaluationProbability}")
 
-        // Save updated patient data
+        // Save updated patient data — with network error handling
         CoroutineScope(Dispatchers.IO).launch {
-            val patient = patientViewModel.getCurrentPatient()
-            if (patient != null) {
-                com.example.diagnosticapp.data.repository.PatientRepository.updatePatient(patient)
+            try {
+                val patient = patientViewModel.getCurrentPatient()
+                if (patient != null) {
+                    val success = com.example.diagnosticapp.data.repository.PatientRepository.updatePatient(patient)
 
-                // Update UI on main thread
+                    withContext(Dispatchers.Main) {
+                        updateUI()
+                        if (!success) {
+                            Toast.makeText(
+                                this@TaskListActivity,
+                                "Vyhodnotenie uložené lokálne. Synchronizácia zlyhala.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("TaskListActivity", "Network error saving evaluation: ${e.javaClass.simpleName} — ${e.message}")
                 withContext(Dispatchers.Main) {
                     updateUI()
-//                    Toast.makeText(
-//                        this@TaskListActivity,
-//                        "Hodnotenie dokončené",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
+                    Toast.makeText(
+                        this@TaskListActivity,
+                        "Vyhodnotenie uložené lokálne. Synchronizácia zlyhala.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
