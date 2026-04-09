@@ -12,6 +12,8 @@ object WritingFeatureExtractor {
         val y: FloatArray,
         val t: FloatArray,
         val b: FloatArray,
+        val az: FloatArray,
+        val alt: FloatArray,
         val p: FloatArray
     )
 
@@ -22,13 +24,13 @@ object WritingFeatureExtractor {
         val file = java.io.File(path)
         if (!file.exists()) {
             Log.e(TAG, "SVC not found")
-            return FloatArray(58)
+            return FloatArray(72)
         }
 
         val lines = file.readLines()
         if (lines.size <= 1) {
             Log.e(TAG, "Invalid SVC")
-            return FloatArray(58)
+            return FloatArray(72)
         }
 
         val d = parseSVC(lines)
@@ -36,23 +38,28 @@ object WritingFeatureExtractor {
     }
 
     // ============================================================
-    // Parse SVC
+    // Parse SVC (PaHaW format: Y X t b az alt p)
     // ============================================================
     private fun parseSVC(lines: List<String>): SVCData {
         val xs = ArrayList<Float>()
         val ys = ArrayList<Float>()
         val ts = ArrayList<Float>()
         val bs = ArrayList<Float>()
+        val azs = ArrayList<Float>()
+        val alts = ArrayList<Float>()
         val ps = ArrayList<Float>()
 
         for (i in 1 until lines.size) {
             val parts = lines[i].trim().split(" ")
             if (parts.size < 7) continue
 
+            // PaHaW format: Y X timestamp button azimuth altitude pressure
             ys.add(parts[0].toFloat())
             xs.add(parts[1].toFloat())
             ts.add(parts[2].toFloat())
             bs.add(parts[3].toFloat())
+            azs.add(parts[4].toFloat())
+            alts.add(parts[5].toFloat())
             ps.add(parts[6].toFloat())
         }
 
@@ -61,6 +68,8 @@ object WritingFeatureExtractor {
             y = ys.toFloatArray(),
             t = ts.toFloatArray(),
             b = bs.toFloatArray(),
+            az = azs.toFloatArray(),
+            alt = alts.toFloatArray(),
             p = ps.toFloatArray()
         )
     }
@@ -164,7 +173,7 @@ object WritingFeatureExtractor {
     }
 
     // ============================================================
-    // FINAL FEATURE EXTRACTION — EXACT PYTHON ORDER (58 FEATURES)
+    // FINAL FEATURE EXTRACTION — UPDATED WITH AZIMUTH & ALTITUDE (72 FEATURES)
     // ============================================================
     private fun computeFeatures(d: SVCData): FloatArray {
 
@@ -172,10 +181,12 @@ object WritingFeatureExtractor {
         val y = d.y
         val t = d.t
         val b = d.b
+        val az = d.az
+        val alt = d.alt
         val p = d.p
 
         val n = x.size
-        if (n < 5) return FloatArray(58)
+        if (n < 5) return FloatArray(72)
 
         val dx = diff(x)
         val dy = diff(y)
@@ -205,6 +216,12 @@ object WritingFeatureExtractor {
         val dp = diff(p)
         val dpDt = FloatArray(dp.size) { i -> dp[i] / dt[i] }
 
+        // ================= Azimuth & Altitude derivatives =======================
+        val daz = diff(az)
+        val dalt = diff(alt)
+        val dazDt = FloatArray(daz.size) { i -> daz[i] / dt[i] }
+        val daltDt = FloatArray(dalt.size) { i -> dalt[i] / dt[i] }
+
         // ================= Duration =======================
         val duration = (t.last() - t.first()).coerceAtLeast(1f)
 
@@ -217,7 +234,7 @@ object WritingFeatureExtractor {
         val out = ArrayList<Float>()
 
         // ============================================================
-        // EXACT PYTHON ORDER
+        // FEATURE ORDER (72 FEATURES)
         // ============================================================
 
         // 1) Basic kinematics (5)
@@ -283,7 +300,7 @@ object WritingFeatureExtractor {
         addSeg(pMain)
         addSeg(pFall)
 
-        // 9) Overshoot
+        // 9) Overshoot (1)
         out += (p.max() - percentile(p, 50))
 
         // 10) Stroke features (5)
@@ -324,7 +341,25 @@ object WritingFeatureExtractor {
         out += corr(p, velY, L)
         out += corr(p, acc, L2)
 
-        // Final result (58 features)
+        // 13) Azimuth features (7)
+        out += mean(az)
+        out += std(az)
+        out += percentile(az, 99)
+        out += percentile(az, 1)
+        out += (percentile(az, 99) - percentile(az, 1))
+        out += mean(dazDt)
+        out += std(dazDt)
+
+        // 14) Altitude features (7)
+        out += mean(alt)
+        out += std(alt)
+        out += percentile(alt, 99)
+        out += percentile(alt, 1)
+        out += (percentile(alt, 99) - percentile(alt, 1))
+        out += mean(daltDt)
+        out += std(daltDt)
+
+        // Final result (72 features)
         val arr = out.toFloatArray()
         for (i in arr.indices) if (!arr[i].isFinite()) arr[i] = 0f
 

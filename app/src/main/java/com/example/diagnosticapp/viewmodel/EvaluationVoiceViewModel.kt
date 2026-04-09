@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ai.onnxruntime.*
 import com.example.diagnosticapp.data.model.ProtocolData
-import com.example.diagnosticapp.utils.VoiceFeatureExtractorV2
+import com.example.diagnosticapp.utils.VoiceFeatureExtractor
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -176,7 +176,7 @@ class EvaluationVoiceViewModel : ViewModel() {
 
         val allFeatures = mutableListOf<FloatArray>()
         for (path in audioPaths) {
-            val features = VoiceFeatureExtractorV2(path)
+            val features = VoiceFeatureExtractor(path)
 
             // Validate extracted features
             if (features.any { it.isNaN() || it.isInfinite() }) {

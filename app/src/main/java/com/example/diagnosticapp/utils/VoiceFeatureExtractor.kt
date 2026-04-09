@@ -7,7 +7,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-fun VoiceFeatureExtractorV2(path: String): FloatArray {
+fun VoiceFeatureExtractor(path: String): FloatArray {
     val file = File(path)
     if (!file.exists()) {
         Log.e("FeatureExtractor", "File not found: $path")

@@ -102,7 +102,7 @@ class EvaluationWritingViewModel : ViewModel() {
     private fun extractFeatures(protocol: ProtocolData?): FloatArray {
         if (protocol == null) {
             Log.e(TAG, "Protocol is NULL")
-            return FloatArray(58) { 0f }
+            return FloatArray(72) { 0f }
         }
 
         val paths = protocol.taskDataList
@@ -122,7 +122,7 @@ class EvaluationWritingViewModel : ViewModel() {
 
         if (all.isEmpty()) {
             Log.e(TAG, "No valid features extracted!")
-            return FloatArray(58) { 0f }
+            return FloatArray(72) { 0f }
         }
 
         Log.d(TAG, "Averaging ${all.size} feature vectors")

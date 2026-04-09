@@ -40,8 +40,8 @@ class WritingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             invalidate()
         }
 
-        // Save data
-        points.add("$x $y $timestamp $isTouching $pressure $azimuth $altitude")
+        // Save data in PaHaW format: Y X timestamp button azimuth altitude pressure
+        points.add("$y $x $timestamp $isTouching $azimuth $altitude $pressure")
 
         return true
     }
@@ -61,8 +61,9 @@ class WritingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         val filename = "drawing_${System.currentTimeMillis()}.svc"
         val file = File(context.getExternalFilesDir(null), filename)
 
-        val content = points.joinToString("\n")
-        file.writeText(points.joinToString("\n"))
+        // PaHaW format: first line is sample count, then data lines
+        val content = "${points.size}\n${points.joinToString("\n")}"
+        file.writeText(content)
         outputFilePath = file.absolutePath
 
         Log.d("DrawingView", "File saved at: ${file.absolutePath}")
