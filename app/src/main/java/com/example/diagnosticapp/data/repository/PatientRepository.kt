@@ -297,15 +297,15 @@ object PatientRepository {
 
         return@withContext try {
             // Fetch existing index or create empty list
-            val currentIndex = try {
-                if (sardine.exists(indexPath)) {
+            val currentIndex = if (sardine.exists(indexPath)) {
+                try {
                     val jsonBytes = sardine.get(indexPath).readBytes()
                     Json.decodeFromString<List<PatientIndexEntry>>(String(jsonBytes)).toMutableList()
-                } else {
-                    mutableListOf()
+                } catch (e: Exception) {
+                    Log.e("PatientRepository", "Failed to read existing index, aborting update to prevent data loss: ${e.message}")
+                    return@withContext false
                 }
-            } catch (e: Exception) {
-                Log.e("PatientRepository", "Error reading index, creating new: ${e.message}")
+            } else {
                 mutableListOf()
             }
 

@@ -165,7 +165,7 @@ class ProtocolSelectionAdapter(
                 else -> "vlastný"
             }
             val typeText2 = when (definition?.type) {
-                1 -> "hlsový"
+                1 -> "hlasový"
                 2 -> "písací"
                 else -> ""
             }
