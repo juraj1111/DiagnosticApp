@@ -37,7 +37,7 @@ object ModelRepository {
                 ModelData(
                     id = "default_voice",
                     name = "Predvolený hlasový model",
-                    filePath = "rf_model.onnx", // From assets
+                    filePath = "rf_model-old.onnx", // From assets
                     type = 1,
                     isDefault = true,
                     isActive = true
